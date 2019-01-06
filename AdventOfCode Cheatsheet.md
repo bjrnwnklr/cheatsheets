@@ -14,6 +14,8 @@ Some cool tricks learned from Advent Of Code 2018
     - [Using a partial sum table to calculate sums across a 2D grid](#using-a-partial-sum-table-to-calculate-sums-across-a-2d-grid)
   - [Advent of code 2018, day 12](#advent-of-code-2018-day-12)
     - [using regex to find all lines that contain '.' and '#'](#using-regex-to-find-all-lines-that-contain--and)
+  - [Advent of code 2018, day 13](#advent-of-code-2018-day-13)
+    - [sorting a list of objects by tuple of object attributes](#sorting-a-list-of-objects-by-tuple-of-object-attributes)
 
 ## 1. Decoding some lines from input file 
 
@@ -131,4 +133,14 @@ import re
 # 'text' is the input file
 initial, *pairs = re.findall(r'[.#]+', text)
 # feeds the first line into 'initial' and the rest of the lines into a list 'pairs'
+```
+
+## Advent of code 2018, day 13
+### sorting a list of objects by tuple of object attributes
+```python
+# cr.r = row index
+# cr.c = column index
+# we want to sort by lowest row first, then lowest column second
+# this works with tuples
+carts = sorted(carts, key= lambda cr: (cr.r, cr.c))
 ```
