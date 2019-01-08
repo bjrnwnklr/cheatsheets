@@ -46,6 +46,8 @@ my_set = {}
 
 # add an element to a set
 my_set.add('element')
+# remove an element from a set
+my_set.remove('element')
 ```
 
 ### Dictionaries
