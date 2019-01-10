@@ -191,3 +191,17 @@ create a defaultdictionary that provides a '.' back for not found entries
 ```python
 new_dict = defaultdictionary(lambda: '.')
 ```
+
+### Command line arguments
+Using `argparse`:
+
+```python
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--URL', '-u', help='URL to query')
+args = parser.parse_args()
+
+if args.URL:
+    print('Set URL to %s' % args.URL)
+```
