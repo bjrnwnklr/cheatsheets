@@ -1,3 +1,9 @@
+---
+author: 'Bjoern Winkler'
+date: 'January 13, 2019'
+title: 'Bjoern's Python Cheat Sheet'
+---
+
 # Björn's python cheat sheet
 v001, 1 Dec 2018
 
