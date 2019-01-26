@@ -1,0 +1,3 @@
+pandoc cheatsheet.md -f markdown -t html -s -o "D:\Benutzer\bjoern\Google Drive\Python\cheatsheet.html" -c retro.css --highlight-style zenburn
+pandoc "AdventOfCodeCheatsheet.md" -f markdown -t html -s -o "D:\Benutzer\bjoern\Google Drive\Python\AdventOfCodeCheatsheet.html" -c retro.css --highlight-style zenburn
+pandoc "git_cheatsheet.md" -f markdown -t html -s -o "D:\Benutzer\bjoern\Google Drive\Python\git_cheatsheet.html" -c retro.css --highlight-style zenburn

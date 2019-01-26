@@ -1,7 +1,14 @@
+---
+title: Bjoern's Git cheat sheet
+author: Bjoern Winkler
+date: 26-01-2019
+...
+
 # Git cheat sheet
 
 ### Revert a single file back to a previous version
 1) Find commit history of the file:
+
     ```
     $ git log <filename>
     commit 491ffa31940dc14cb300eb5307da5ce0578381cb
@@ -18,6 +25,7 @@
     ```
 
 2) Revert file back to previous commit
+
     ```
     $ git checkout <commit-id> <filename>
     ```

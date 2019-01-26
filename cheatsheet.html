@@ -1,192 +1,228 @@
 <!DOCTYPE html>
-    <html>
-    <head>
-        <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
-        <title>Björn's python cheat sheet</title>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.css" integrity="sha384-D+9gmBxUQogRLqvARvNLmA9hS2x//eK1FhVb9PiU86gmcrBrJAQT8okdJ4LMp2uv" crossorigin="anonymous">
-        <style>
-/*--------------------------------------------------------------------------------------------- * Copyright (c) Microsoft Corporation. All rights reserved. * Licensed under the MIT License. See License.txt in the project root for license information. *--------------------------------------------------------------------------------------------*/ body { font-family: "Segoe WPC", "Segoe UI", "SFUIText-Light", "HelveticaNeue-Light", sans-serif, "Droid Sans Fallback"; font-size: 14px; padding: 0 26px; line-height: 22px; word-wrap: break-word; } #code-csp-warning { position: fixed; top: 0; right: 0; color: white; margin: 16px; text-align: center; font-size: 12px; font-family: sans-serif; background-color:#444444; cursor: pointer; padding: 6px; box-shadow: 1px 1px 1px rgba(0,0,0,.25); } #code-csp-warning:hover { text-decoration: none; background-color:#007acc; box-shadow: 2px 2px 2px rgba(0,0,0,.25); } body.scrollBeyondLastLine { margin-bottom: calc(100vh - 22px); } body.showEditorSelection .code-line { position: relative; } body.showEditorSelection .code-active-line:before, body.showEditorSelection .code-line:hover:before { content: ""; display: block; position: absolute; top: 0; left: -12px; height: 100%; } body.showEditorSelection li.code-active-line:before, body.showEditorSelection li.code-line:hover:before { left: -30px; } .vscode-light.showEditorSelection .code-active-line:before { border-left: 3px solid rgba(0, 0, 0, 0.15); } .vscode-light.showEditorSelection .code-line:hover:before { border-left: 3px solid rgba(0, 0, 0, 0.40); } .vscode-light.showEditorSelection .code-line .code-line:hover:before { border-left: none; } .vscode-dark.showEditorSelection .code-active-line:before { border-left: 3px solid rgba(255, 255, 255, 0.4); } .vscode-dark.showEditorSelection .code-line:hover:before { border-left: 3px solid rgba(255, 255, 255, 0.60); } .vscode-dark.showEditorSelection .code-line .code-line:hover:before { border-left: none; } .vscode-high-contrast.showEditorSelection .code-active-line:before { border-left: 3px solid rgba(255, 160, 0, 0.7); } .vscode-high-contrast.showEditorSelection .code-line:hover:before { border-left: 3px solid rgba(255, 160, 0, 1); } .vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before { border-left: none; } img { max-width: 100%; max-height: 100%; } a { text-decoration: none; } a:hover { text-decoration: underline; } a:focus, input:focus, select:focus, textarea:focus { outline: 1px solid -webkit-focus-ring-color; outline-offset: -1px; } hr { border: 0; height: 2px; border-bottom: 2px solid; } h1 { padding-bottom: 0.3em; line-height: 1.2; border-bottom-width: 1px; border-bottom-style: solid; } h1, h2, h3 { font-weight: normal; } h1 code, h2 code, h3 code, h4 code, h5 code, h6 code { font-size: inherit; line-height: auto; } table { border-collapse: collapse; } table > thead > tr > th { text-align: left; border-bottom: 1px solid; } table > thead > tr > th, table > thead > tr > td, table > tbody > tr > th, table > tbody > tr > td { padding: 5px 10px; } table > tbody > tr + tr > td { border-top: 1px solid; } blockquote { margin: 0 7px 0 5px; padding: 0 16px 0 10px; border-left-width: 5px; border-left-style: solid; } code { font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback"; font-size: 14px; line-height: 19px; } body.wordWrap pre { white-space: pre-wrap; } .mac code { font-size: 12px; line-height: 18px; } pre:not(.hljs), pre.hljs code > div { padding: 16px; border-radius: 3px; overflow: auto; } /** Theming */ pre code { color: var(--vscode-editor-foreground); } .vscode-light pre { background-color: rgba(220, 220, 220, 0.4); } .vscode-dark pre { background-color: rgba(10, 10, 10, 0.4); } .vscode-high-contrast pre { background-color: rgb(0, 0, 0); } .vscode-high-contrast h1 { border-color: rgb(0, 0, 0); } .vscode-light table > thead > tr > th { border-color: rgba(0, 0, 0, 0.69); } .vscode-dark table > thead > tr > th { border-color: rgba(255, 255, 255, 0.69); } .vscode-light h1, .vscode-light hr, .vscode-light table > tbody > tr + tr > td { border-color: rgba(0, 0, 0, 0.18); } .vscode-dark h1, .vscode-dark hr, .vscode-dark table > tbody > tr + tr > td { border-color: rgba(255, 255, 255, 0.18); } 
-</style>
-<style>
-/* https://raw.githubusercontent.com/isagalaev/highlight.js/master/src/styles/vs2015.css */ /* * Visual Studio 2015 dark style * Author: Nicolas LLOBERA <nllobera@gmail.com> */ .hljs-keyword, .hljs-literal, .hljs-symbol, .hljs-name { color: #569CD6; } .hljs-link { color: #569CD6; text-decoration: underline; } .hljs-built_in, .hljs-type { color: #4EC9B0; } .hljs-number, .hljs-class { color: #B8D7A3; } .hljs-string, .hljs-meta-string { color: #D69D85; } .hljs-regexp, .hljs-template-tag { color: #9A5334; } .hljs-subst, .hljs-function, .hljs-title, .hljs-params, .hljs-formula { color: #DCDCDC; } .hljs-comment, .hljs-quote { color: #57A64A; font-style: italic; } .hljs-doctag { color: #608B4E; } .hljs-meta, .hljs-meta-keyword, .hljs-tag { color: #9B9B9B; } .hljs-variable, .hljs-template-variable { color: #BD63C5; } .hljs-attr, .hljs-attribute, .hljs-builtin-name { color: #9CDCFE; } .hljs-section { color: gold; } .hljs-emphasis { font-style: italic; } .hljs-strong { font-weight: bold; } /*.hljs-code { font-family:'Monospace'; }*/ .hljs-bullet, .hljs-selector-tag, .hljs-selector-id, .hljs-selector-class, .hljs-selector-attr, .hljs-selector-pseudo { color: #D7BA7D; } .hljs-addition { background-color: #144212; display: inline-block; width: 100%; } .hljs-deletion { background-color: #600; display: inline-block; width: 100%; } /* From https://raw.githubusercontent.com/isagalaev/highlight.js/master/src/styles/vs.css */ /* Visual Studio-like style based on original C# coloring by Jason Diamond <jason@diamond.name> */ .vscode-light .hljs-function, .vscode-light .hljs-params { color: inherit; } .vscode-light .hljs-comment, .vscode-light .hljs-quote, .vscode-light .hljs-variable { color: #008000; } .vscode-light .hljs-keyword, .vscode-light .hljs-selector-tag, .vscode-light .hljs-built_in, .vscode-light .hljs-name, .vscode-light .hljs-tag { color: #00f; } .vscode-light .hljs-string, .vscode-light .hljs-title, .vscode-light .hljs-section, .vscode-light .hljs-attribute, .vscode-light .hljs-literal, .vscode-light .hljs-template-tag, .vscode-light .hljs-template-variable, .vscode-light .hljs-type, .vscode-light .hljs-addition { color: #a31515; } .vscode-light .hljs-deletion, .vscode-light .hljs-selector-attr, .vscode-light .hljs-selector-pseudo, .vscode-light .hljs-meta { color: #2b91af; } .vscode-light .hljs-doctag { color: #808080; } .vscode-light .hljs-attr { color: #f00; } .vscode-light .hljs-symbol, .vscode-light .hljs-bullet, .vscode-light .hljs-link { color: #00b0e8; } .vscode-light .hljs-emphasis { font-style: italic; } .vscode-light .hljs-strong { font-weight: bold; }
-</style>
-<style>
-.task-list-item { list-style-type: none; } .task-list-item-checkbox { margin-left: -20px; vertical-align: middle; }
-</style>
-        <style>
-            body {
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'HelveticaNeue-Light', 'Ubuntu', 'Droid Sans', sans-serif;
-                font-size: 14px;
-                line-height: 1;
-            }
-        </style>
-        
-    </head>
-    <body>
-        <h1 id="bj%C3%B6rns-python-cheat-sheet">Björn's python cheat sheet</h1>
-<p>v001, 1 Dec 2018</p>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Bjoern Winkler" />
+  <title>Bjoern’s Python cheat sheet</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  { color: #cccccc; background-color: #303030; }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ffcfaf; } /* Alert */
+code span.an { color: #7f9f7f; font-weight: bold; } /* Annotation */
+code span.at { } /* Attribute */
+code span.bn { color: #dca3a3; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #f0dfaf; } /* ControlFlow */
+code span.ch { color: #dca3a3; } /* Char */
+code span.cn { color: #dca3a3; font-weight: bold; } /* Constant */
+code span.co { color: #7f9f7f; } /* Comment */
+code span.cv { color: #7f9f7f; font-weight: bold; } /* CommentVar */
+code span.do { color: #7f9f7f; } /* Documentation */
+code span.dt { color: #dfdfbf; } /* DataType */
+code span.dv { color: #dcdccc; } /* DecVal */
+code span.er { color: #c3bf9f; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #c0bed1; } /* Float */
+code span.fu { color: #efef8f; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #7f9f7f; font-weight: bold; } /* Information */
+code span.kw { color: #f0dfaf; } /* Keyword */
+code span.op { color: #f0efd0; } /* Operator */
+code span.ot { color: #efef8f; } /* Other */
+code span.pp { color: #ffcfaf; font-weight: bold; } /* Preprocessor */
+code span.sc { color: #dca3a3; } /* SpecialChar */
+code span.ss { color: #cc9393; } /* SpecialString */
+code span.st { color: #cc9393; } /* String */
+code span.va { } /* Variable */
+code span.vs { color: #cc9393; } /* VerbatimString */
+code span.wa { color: #7f9f7f; font-weight: bold; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="retro.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">Bjoern’s Python cheat sheet</h1>
+<p class="author">Bjoern Winkler</p>
+<p class="date">26-01-2019</p>
+</header>
 <h3 id="lists">Lists</h3>
 <p>Creating a list</p>
-<pre><code class="language-python"><div>my_list = list()
-my_list = []
-
-<span class="hljs-string">''</span>.join(my_list)                <span class="hljs-comment"># joins the elements of the list with no blanks ('')</span>
-</div></code></pre>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb1-1" data-line-number="1">my_list <span class="op">=</span> <span class="bu">list</span>()</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">my_list <span class="op">=</span> []</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="co">&#39;&#39;</span>.join(my_list)                <span class="co"># joins the elements of the list with no blanks (&#39;&#39;)</span></a></code></pre></div>
 <p>List slices (non-destructive)</p>
-<pre><code class="language-python"><div><span class="hljs-comment"># [] notation uses [start:stop:step]</span>
-my_list[<span class="hljs-number">5</span>:<span class="hljs-number">10</span>:<span class="hljs-number">2</span>]                 <span class="hljs-comment"># select elements 5, 7 and 9</span>
-</div></code></pre>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># [] notation uses [start:stop:step]</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">my_list[<span class="dv">5</span>:<span class="dv">10</span>:<span class="dv">2</span>]                 <span class="co"># select elements 5, 7 and 9</span></a></code></pre></div>
 <p>List methods (changing the state of the list)</p>
-<pre><code class="language-python"><div>my_list.append(<span class="hljs-string">'element'</span>)       <span class="hljs-comment"># append to a list</span>
-my_list.remove(<span class="hljs-string">'element'</span>)       <span class="hljs-comment"># remove first instance of element from list</span>
-popped = my_list.pop()          <span class="hljs-comment"># remove and return the last element of a list</span>
-popped = my_list.pop(<span class="hljs-number">0</span>)         <span class="hljs-comment"># pop off element at index 0 (first element)</span>
-my_list.extend([<span class="hljs-number">3</span>, <span class="hljs-number">4</span>])          <span class="hljs-comment"># extending a list by adding new list to the end (useful for combining two lists)</span>
-my_list.insert(<span class="hljs-number">0</span>, <span class="hljs-string">'element'</span>)    <span class="hljs-comment"># insert object _before_ the specified index - here at the beginning</span>
-
-</div></code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb3-1" data-line-number="1">my_list.append(<span class="st">&#39;element&#39;</span>)       <span class="co"># append to a list</span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">my_list.remove(<span class="st">&#39;element&#39;</span>)       <span class="co"># remove first instance of element from list</span></a>
+<a class="sourceLine" id="cb3-3" data-line-number="3">popped <span class="op">=</span> my_list.pop()          <span class="co"># remove and return the last element of a list</span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4">popped <span class="op">=</span> my_list.pop(<span class="dv">0</span>)         <span class="co"># pop off element at index 0 (first element)</span></a>
+<a class="sourceLine" id="cb3-5" data-line-number="5">my_list.extend([<span class="dv">3</span>, <span class="dv">4</span>])          <span class="co"># extending a list by adding new list to the end (useful for combining two lists)</span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6">my_list.insert(<span class="dv">0</span>, <span class="st">&#39;element&#39;</span>)    <span class="co"># insert object _before_ the specified index - here at the beginning</span></a></code></pre></div>
 <p>Copying a list</p>
-<pre><code class="language-python"><div><span class="hljs-comment"># lists are not copied when assigning a list to a new variable - it just assigns a reference</span>
-copied_list = my_list.copy()
-copied_list = my_list[:]
-</div></code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co"># lists are not copied when assigning a list to a new variable - it just assigns a reference</span></a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">copied_list <span class="op">=</span> my_list.copy()</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3">copied_list <span class="op">=</span> my_list[:]</a></code></pre></div>
 <p>List comprehensions</p>
-<pre><code class="language-python"><div>squares = [x**<span class="hljs-number">2</span> <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> range(<span class="hljs-number">1</span>,<span class="hljs-number">11</span>)]
-</div></code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb5-1" data-line-number="1">squares <span class="op">=</span> [x<span class="op">**</span><span class="dv">2</span> <span class="cf">for</span> x <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>,<span class="dv">11</span>)]</a></code></pre></div>
 <h3 id="sets">Sets</h3>
-<pre><code class="language-python"><div>my_set = set()
-my_set = {}
-
-<span class="hljs-comment"># add an element to a set</span>
-my_set.add(<span class="hljs-string">'element'</span>)
-<span class="hljs-comment"># remove an element from a set</span>
-my_set.remove(<span class="hljs-string">'element'</span>)
-</div></code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb6-1" data-line-number="1">my_set <span class="op">=</span> <span class="bu">set</span>()</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">my_set <span class="op">=</span> {}</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="co"># add an element to a set</span></a>
+<a class="sourceLine" id="cb6-5" data-line-number="5">my_set.add(<span class="st">&#39;element&#39;</span>)</a>
+<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="co"># remove an element from a set</span></a>
+<a class="sourceLine" id="cb6-7" data-line-number="7">my_set.remove(<span class="st">&#39;element&#39;</span>)</a></code></pre></div>
 <h3 id="dictionaries">Dictionaries</h3>
-<pre><code class="language-python"><div><span class="hljs-comment"># creating a dictionary</span>
-my_dict = dict()
-<span class="hljs-comment"># ... or ...</span>
-my_dict = {<span class="hljs-string">'color'</span>: <span class="hljs-string">'green'</span>, <span class="hljs-string">'points'</span>: <span class="hljs-number">5</span>}
-
-<span class="hljs-comment"># accessing a value</span>
-my_dict[<span class="hljs-string">'color'</span>]
-<span class="hljs-comment"># adding a new key-value pair</span>
-my_dict[<span class="hljs-string">'name'</span>] = <span class="hljs-string">'Hans'</span>
-<span class="hljs-comment"># looping through all key-value pairs</span>
-<span class="hljs-keyword">for</span> key, value <span class="hljs-keyword">in</span> my_dict.items():
-    print(key, value)
-</div></code></pre>
-<h5 id="getting-min--max-key-values">getting min / max key values</h5>
-<pre><code class="language-python"><div>min_key = min(my_dict)
-max_key = max(my_dict)
-</div></code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co"># creating a dictionary</span></a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">my_dict <span class="op">=</span> <span class="bu">dict</span>()</a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co"># ... or ...</span></a>
+<a class="sourceLine" id="cb7-4" data-line-number="4">my_dict <span class="op">=</span> {<span class="st">&#39;color&#39;</span>: <span class="st">&#39;green&#39;</span>, <span class="st">&#39;points&#39;</span>: <span class="dv">5</span>}</a>
+<a class="sourceLine" id="cb7-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="co"># accessing a value</span></a>
+<a class="sourceLine" id="cb7-7" data-line-number="7">my_dict[<span class="st">&#39;color&#39;</span>]</a>
+<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co"># adding a new key-value pair</span></a>
+<a class="sourceLine" id="cb7-9" data-line-number="9">my_dict[<span class="st">&#39;name&#39;</span>] <span class="op">=</span> <span class="st">&#39;Hans&#39;</span></a>
+<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co"># looping through all key-value pairs</span></a>
+<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="cf">for</span> key, value <span class="kw">in</span> my_dict.items():</a>
+<a class="sourceLine" id="cb7-12" data-line-number="12">    <span class="bu">print</span>(key, value)</a></code></pre></div>
+<h5 id="getting-min-max-key-values">getting min / max key values</h5>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb8-1" data-line-number="1">min_key <span class="op">=</span> <span class="bu">min</span>(my_dict)</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2">max_key <span class="op">=</span> <span class="bu">max</span>(my_dict)</a></code></pre></div>
 <h3 id="strings">Strings</h3>
 <h5 id="string-formatting">String formatting</h5>
-<pre><code class="language-python"><div><span class="hljs-comment"># string formatting expression</span>
-<span class="hljs-string">'Hello %s, how are you today on %d %s'</span> % (<span class="hljs-string">'Bjoern, 30, '</span>Novembe<span class="hljs-string">r')
-</span></div></code></pre>
-<h5 id="replacing-text-in-strings-similar-to-resub-just-without-regex">replacing text in strings (similar to re.sub just without regex)</h5>
-<pre><code class="language-python"><div>new_text = text.replace(<span class="hljs-string">'text to be replaced'</span>, <span class="hljs-string">''</span>)
-</div></code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="co"># string formatting expression</span></a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="co">&#39;Hello %s, how are you today on %d %s&#39;</span> <span class="op">%</span> (<span class="st">&#39;Bjoern, 30, &#39;</span>November<span class="st">&#39;)</span></a></code></pre></div>
+<h5 id="replacing-text-in-strings-similar-to-re.sub-just-without-regex">replacing text in strings (similar to re.sub just without regex)</h5>
+<div class="sourceCode" id="cb10"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb10-1" data-line-number="1">new_text <span class="op">=</span> text.replace(<span class="st">&#39;text to be replaced&#39;</span>, <span class="st">&#39;&#39;</span>)</a></code></pre></div>
 <h5 id="joining-multiple-elements-to-a-string">joining multiple elements to a string</h5>
-<pre><code class="language-python"><div>val = <span class="hljs-string">''</span>.join(x[i] <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(i<span class="hljs-number">-2</span>, i+<span class="hljs-number">3</span>))
-</div></code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb11-1" data-line-number="1">val <span class="op">=</span> <span class="st">&#39;&#39;</span>.join(x[i] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(i<span class="dv">-2</span>, i<span class="op">+</span><span class="dv">3</span>))</a></code></pre></div>
 <h3 id="regular-expressions">Regular expressions</h3>
 <h5 id="finding-and-returning-the-first-match-of-two-repeating-letters">finding and returning the first match of two repeating letters</h5>
-<pre><code class="language-python"><div><span class="hljs-keyword">import</span> re
-
-<span class="hljs-comment"># returns a match object </span>
-<span class="hljs-comment"># (\w) - finds and returns one letter</span>
-<span class="hljs-comment"># \1 repeats the previous group (finds the same letter again)</span>
-reg_match = re.search(<span class="hljs-string">r'(\w)\1'</span>, text)
-
-<span class="hljs-comment"># check if found and return the index of the found sequence</span>
-<span class="hljs-keyword">if</span> reg_match:
-    i = reg_match.start()
-</div></code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="im">import</span> re</a>
+<a class="sourceLine" id="cb12-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb12-3" data-line-number="3"><span class="co"># returns a match object </span></a>
+<a class="sourceLine" id="cb12-4" data-line-number="4"><span class="co"># (\w) - finds and returns one letter</span></a>
+<a class="sourceLine" id="cb12-5" data-line-number="5"><span class="co"># \1 repeats the previous group (finds the same letter again)</span></a>
+<a class="sourceLine" id="cb12-6" data-line-number="6">reg_match <span class="op">=</span> re.search(<span class="vs">r&#39;(\w)\1&#39;</span>, text)</a>
+<a class="sourceLine" id="cb12-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb12-8" data-line-number="8"><span class="co"># check if found and return the index of the found sequence</span></a>
+<a class="sourceLine" id="cb12-9" data-line-number="9"><span class="cf">if</span> reg_match:</a>
+<a class="sourceLine" id="cb12-10" data-line-number="10">    i <span class="op">=</span> reg_match.start()</a></code></pre></div>
 <h5 id="replacing-a-single-letter-or-pattern-in-a-text">replacing a single letter or pattern in a text</h5>
-<pre><code class="language-python"><div><span class="hljs-keyword">import</span> re
-
-<span class="hljs-comment"># replaces all 'a' in text with empty string (removes a)</span>
-new_text = re.sub(<span class="hljs-string">r'a'</span>, <span class="hljs-string">''</span>, text)
-</div></code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="im">import</span> re</a>
+<a class="sourceLine" id="cb13-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb13-3" data-line-number="3"><span class="co"># replaces all &#39;a&#39; in text with empty string (removes a)</span></a>
+<a class="sourceLine" id="cb13-4" data-line-number="4">new_text <span class="op">=</span> re.sub(<span class="vs">r&#39;a&#39;</span>, <span class="st">&#39;&#39;</span>, text)</a></code></pre></div>
 <h3 id="files">Files</h3>
 <h5 id="built-in-file-reader">Built in file reader</h5>
-<pre><code class="language-python"><div><span class="hljs-comment"># open a text file and read from it</span>
-txt_file = open(<span class="hljs-string">r'D:\Python\BW\textfile.txt'</span>, <span class="hljs-string">'r'</span>)
-<span class="hljs-comment"># read all of the file</span>
-my_text = txt_file.read()
-
-<span class="hljs-comment"># read 10 characters</span>
-my_text = txt_file.read(<span class="hljs-number">10</span>)
-<span class="hljs-comment"># read a single line</span>
-my_txt = txt_file.readline()
-<span class="hljs-comment"># read all lines, but split to a list</span>
-my_txt = txt_file.readlines()
-</div></code></pre>
-<h5 id="open-a-file-with-%E2%80%9Ewith">Open a file with „with“</h5>
-<p>Closes the file automatically after exiting the with block.
-From <a href="https://www.safaribooksonline.com/library/view/python-for-data/9781491957653/ch03.html">Python for data science</a></p>
-<pre><code class="language-python"><div><span class="hljs-keyword">with</span> open(path) <span class="hljs-keyword">as</span> f:
-    lines = [x.rstrip() <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> f]
-</div></code></pre>
+<div class="sourceCode" id="cb14"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="co"># open a text file and read from it</span></a>
+<a class="sourceLine" id="cb14-2" data-line-number="2">txt_file <span class="op">=</span> <span class="bu">open</span>(<span class="vs">r&#39;D:\Python\BW\textfile.txt&#39;</span>, <span class="st">&#39;r&#39;</span>)</a>
+<a class="sourceLine" id="cb14-3" data-line-number="3"><span class="co"># read all of the file</span></a>
+<a class="sourceLine" id="cb14-4" data-line-number="4">my_text <span class="op">=</span> txt_file.read()</a>
+<a class="sourceLine" id="cb14-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb14-6" data-line-number="6"><span class="co"># read 10 characters</span></a>
+<a class="sourceLine" id="cb14-7" data-line-number="7">my_text <span class="op">=</span> txt_file.read(<span class="dv">10</span>)</a>
+<a class="sourceLine" id="cb14-8" data-line-number="8"><span class="co"># read a single line</span></a>
+<a class="sourceLine" id="cb14-9" data-line-number="9">my_txt <span class="op">=</span> txt_file.readline()</a>
+<a class="sourceLine" id="cb14-10" data-line-number="10"><span class="co"># read all lines, but split to a list</span></a>
+<a class="sourceLine" id="cb14-11" data-line-number="11">my_txt <span class="op">=</span> txt_file.readlines()</a></code></pre></div>
+<h5 id="open-a-file-with-with">Open a file with „with“</h5>
+<p>Closes the file automatically after exiting the with block. From <a href="https://www.safaribooksonline.com/library/view/python-for-data/9781491957653/ch03.html">Python for data science</a></p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="cf">with</span> <span class="bu">open</span>(path) <span class="im">as</span> f:</a>
+<a class="sourceLine" id="cb15-2" data-line-number="2">    lines <span class="op">=</span> [x.rstrip() <span class="cf">for</span> x <span class="kw">in</span> f]</a></code></pre></div>
 <h5 id="csv-file-reader">CSV file reader</h5>
-<pre><code class="language-python"><div><span class="hljs-keyword">import</span> csv
-csv_file = open(<span class="hljs-string">r'D:\Python\BW\csvfile.csv'</span>, newline=<span class="hljs-string">''</span>, encoding=<span class="hljs-string">'utf-8'</span>)
-reader = csv.reader(csv_file)
-<span class="hljs-comment"># read the first line</span>
-headers = next(reader)
-<span class="hljs-comment"># read all other lines</span>
-records = list(reader)
-</div></code></pre>
+<div class="sourceCode" id="cb16"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="im">import</span> csv</a>
+<a class="sourceLine" id="cb16-2" data-line-number="2">csv_file <span class="op">=</span> <span class="bu">open</span>(<span class="vs">r&#39;D:\Python\BW\csvfile.csv&#39;</span>, newline<span class="op">=</span><span class="st">&#39;&#39;</span>, encoding<span class="op">=</span><span class="st">&#39;utf-8&#39;</span>)</a>
+<a class="sourceLine" id="cb16-3" data-line-number="3">reader <span class="op">=</span> csv.reader(csv_file)</a>
+<a class="sourceLine" id="cb16-4" data-line-number="4"><span class="co"># read the first line</span></a>
+<a class="sourceLine" id="cb16-5" data-line-number="5">headers <span class="op">=</span> <span class="bu">next</span>(reader)</a>
+<a class="sourceLine" id="cb16-6" data-line-number="6"><span class="co"># read all other lines</span></a>
+<a class="sourceLine" id="cb16-7" data-line-number="7">records <span class="op">=</span> <span class="bu">list</span>(reader)</a></code></pre></div>
 <h3 id="collections">Collections</h3>
 <h5 id="counter">Counter</h5>
-<pre><code class="language-python"><div><span class="hljs-keyword">import</span> collections <span class="hljs-keyword">as</span> coll
-<span class="hljs-comment"># create counter from a list</span>
-my_list = list()
-my_counter = coll.Counter(my_list)
-
-<span class="hljs-comment"># remove items from counter</span>
-my_counter.pop(item)
-
-<span class="hljs-comment"># output 5 most common items as a list</span>
-my_counter.most_common(<span class="hljs-number">5</span>)
-</div></code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="im">import</span> collections <span class="im">as</span> coll</a>
+<a class="sourceLine" id="cb17-2" data-line-number="2"><span class="co"># create counter from a list</span></a>
+<a class="sourceLine" id="cb17-3" data-line-number="3">my_list <span class="op">=</span> <span class="bu">list</span>()</a>
+<a class="sourceLine" id="cb17-4" data-line-number="4">my_counter <span class="op">=</span> coll.Counter(my_list)</a>
+<a class="sourceLine" id="cb17-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb17-6" data-line-number="6"><span class="co"># remove items from counter</span></a>
+<a class="sourceLine" id="cb17-7" data-line-number="7">my_counter.pop(item)</a>
+<a class="sourceLine" id="cb17-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb17-9" data-line-number="9"><span class="co"># output 5 most common items as a list</span></a>
+<a class="sourceLine" id="cb17-10" data-line-number="10">my_counter.most_common(<span class="dv">5</span>)</a></code></pre></div>
 <h5 id="deques-double-ended-lists">Deques (double ended lists)</h5>
-<pre><code class="language-python"><div><span class="hljs-keyword">from</span> collections <span class="hljs-keyword">import</span> deque
-
-<span class="hljs-comment"># create a new deque with a single element</span>
-<span class="hljs-comment"># this constructor takes a list as argument and converts it to a deque</span>
-circle = deque([<span class="hljs-number">0</span>])
-
-<span class="hljs-comment"># standard operations</span>
-<span class="hljs-comment"># append an element at the current position</span>
-circle.append(item)
-<span class="hljs-comment"># rotate the current position back (-) and forth (+)</span>
-circle.rotate(<span class="hljs-number">-7</span>)
-<span class="hljs-comment"># pop the current element</span>
-circle.pop()
-</div></code></pre>
+<div class="sourceCode" id="cb18"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="im">from</span> collections <span class="im">import</span> deque</a>
+<a class="sourceLine" id="cb18-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb18-3" data-line-number="3"><span class="co"># create a new deque with a single element</span></a>
+<a class="sourceLine" id="cb18-4" data-line-number="4"><span class="co"># this constructor takes a list as argument and converts it to a deque</span></a>
+<a class="sourceLine" id="cb18-5" data-line-number="5">circle <span class="op">=</span> deque([<span class="dv">0</span>])</a>
+<a class="sourceLine" id="cb18-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb18-7" data-line-number="7"><span class="co"># standard operations</span></a>
+<a class="sourceLine" id="cb18-8" data-line-number="8"><span class="co"># append an element at the current position</span></a>
+<a class="sourceLine" id="cb18-9" data-line-number="9">circle.append(item)</a>
+<a class="sourceLine" id="cb18-10" data-line-number="10"><span class="co"># rotate the current position back (-) and forth (+)</span></a>
+<a class="sourceLine" id="cb18-11" data-line-number="11">circle.rotate(<span class="op">-</span><span class="dv">7</span>)</a>
+<a class="sourceLine" id="cb18-12" data-line-number="12"><span class="co"># pop the current element</span></a>
+<a class="sourceLine" id="cb18-13" data-line-number="13">circle.pop()</a></code></pre></div>
 <h5 id="defaultdictionary">defaultdictionary</h5>
 <p>create a default dictionary that sets not found entries to 0</p>
-<pre><code class="language-python"><div><span class="hljs-keyword">from</span> collections <span class="hljs-keyword">import</span> defaultdictionary
-
-new_dict = defaultdictionary(int)
-</div></code></pre>
-<p>create a defaultdictionary that provides a '.' back for not found entries</p>
-<pre><code class="language-python"><div>new_dict = defaultdictionary(<span class="hljs-keyword">lambda</span>: <span class="hljs-string">'.'</span>)
-</div></code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="im">from</span> collections <span class="im">import</span> defaultdictionary</a>
+<a class="sourceLine" id="cb19-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb19-3" data-line-number="3">new_dict <span class="op">=</span> defaultdictionary(<span class="bu">int</span>)</a></code></pre></div>
+<p>create a defaultdictionary that provides a ‘.’ back for not found entries</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb20-1" data-line-number="1">new_dict <span class="op">=</span> defaultdictionary(<span class="kw">lambda</span>: <span class="st">&#39;.&#39;</span>)</a></code></pre></div>
 <h3 id="command-line-arguments">Command line arguments</h3>
 <p>Using <code>argparse</code>:</p>
-<pre><code class="language-python"><div><span class="hljs-keyword">import</span> argparse
-
-parser = argparse.ArgumentParser()
-parser.add_argument(<span class="hljs-string">'--URL'</span>, <span class="hljs-string">'-u'</span>, help=<span class="hljs-string">'URL to query'</span>)
-args = parser.parse_args()
-
-<span class="hljs-keyword">if</span> args.URL:
-    print(<span class="hljs-string">'Set URL to %s'</span> % args.URL)
-</div></code></pre>
-
-    </body>
-    </html>
+<div class="sourceCode" id="cb21"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="im">import</span> argparse</a>
+<a class="sourceLine" id="cb21-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb21-3" data-line-number="3">parser <span class="op">=</span> argparse.ArgumentParser()</a>
+<a class="sourceLine" id="cb21-4" data-line-number="4">parser.add_argument(<span class="st">&#39;--URL&#39;</span>, <span class="st">&#39;-u&#39;</span>, <span class="bu">help</span><span class="op">=</span><span class="st">&#39;URL to query&#39;</span>)</a>
+<a class="sourceLine" id="cb21-5" data-line-number="5">args <span class="op">=</span> parser.parse_args()</a>
+<a class="sourceLine" id="cb21-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb21-7" data-line-number="7"><span class="cf">if</span> args.URL:</a>
+<a class="sourceLine" id="cb21-8" data-line-number="8">    <span class="bu">print</span>(<span class="st">&#39;Set URL to </span><span class="sc">%s</span><span class="st">&#39;</span> <span class="op">%</span> args.URL)</a></code></pre></div>
+</body>
+</html>

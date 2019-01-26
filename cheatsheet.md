@@ -1,11 +1,9 @@
 ---
-author: 'Bjoern Winkler'
-date: 'January 13, 2019'
-title: 'Bjoern's Python Cheat Sheet'
----
+title: Bjoern's Python cheat sheet
+author: Bjoern Winkler
+date: 26-01-2019
+...
 
-# Björn's python cheat sheet
-v001, 1 Dec 2018
 
 ### Lists
 Creating a list

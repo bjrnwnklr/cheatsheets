@@ -1,3 +1,9 @@
+---
+title: Advent of Code 2018 Python cheat sheet
+author: Bjoern Winkler
+date: 26-01-2019
+...
+
 # Advent of code - cheatsheet
 
 Some cool tricks learned from Advent Of Code 2018
@@ -16,6 +22,8 @@ Some cool tricks learned from Advent Of Code 2018
     - [using regex to find all lines that contain '.' and '#'](#using-regex-to-find-all-lines-that-contain--and)
   - [Advent of code 2018, day 13](#advent-of-code-2018-day-13)
     - [sorting a list of objects by tuple of object attributes](#sorting-a-list-of-objects-by-tuple-of-object-attributes)
+  - [Advent of code 2018, day 20](#advent-of-code-2018-day-20)
+    - [Parsing a regex like input string with branches and options](#parsing-a-regex-like-input-string-with-branches-and-options)
 
 ## 1. Decoding some lines from input file 
 
@@ -143,4 +151,57 @@ initial, *pairs = re.findall(r'[.#]+', text)
 # we want to sort by lowest row first, then lowest column second
 # this works with tuples
 carts = sorted(carts, key= lambda cr: (cr.r, cr.c))
+```
+
+## Advent of code 2018, day 20
+### Parsing a regex like input string with branches and options
+
+- `'('` starts a branch, `'|'` is a divider between options, `')'` closes a branch
+- parse through the input string and remember positions when encountering a branch - by using a stack
+
+```python
+# directions
+directions = {
+                'N': (0, -1),
+                'E': (1, 0),
+                'S': (0, 1),
+                'W': (-1, 0)
+}
+
+# stack to track current position
+positions = []
+# starting positions
+x, y = 5000, 5000
+# previous positions
+pre_x, pre_y = x, y
+# distance tracking dictionary
+distances = defaultdict(int)
+# starting distance
+dist = 0
+
+########## set input
+f = open(r'input.txt').read().rstrip()
+maze = f
+
+for c in maze[1:-1]:
+    print('Char: %s, stack: %d' % (c, len(positions)))
+    if c == '(':   # save position if we find a new branch
+        positions.append((x, y))
+    elif c == ')': # end of branch, pop position before branch
+        x, y = positions.pop()
+    elif c == '|': # option, go back to last position but leave on stack
+                   # until we find the closing ')'
+        x, y = positions[-1]
+    else:          # process door
+        dx, dy = directions[c] # get direction change
+        x += dx
+        y += dy
+        # add to distance (distance for current position)
+        if distances[(x, y)] != 0:  # we already have a distance entry - we were here already
+            # take the minimum since there is a shorter route to the room
+            distances[(x, y)] = min(distances[(x, y)], distances[(pre_x, pre_y)] + 1)
+        else:  # new room, add previous distance plus 1
+            distances[(x, y)] = distances[(pre_x, pre_y)] + 1
+
+    pre_x, pre_y = x, y
 ```
