@@ -211,7 +211,7 @@ if args.URL:
 ```
 
 ### Functions
-Codewars "Calculating with functions" - a function for each number and operator.
+##### Codewars "Calculating with functions" - a function for each number and operator.
 
 Two clever ways of doing this:
 1) return a lambda function for the first argument:
@@ -244,4 +244,42 @@ plus = lambda x: lambda y: y + x
 minus = lambda x: lambda y: y - x
 times = lambda x: lambda y: y * x
 divided_by = lambda x: lambda y: y / x
+```
+
+##### Codewars "Unary function chain" - chain a number of functions
+
+Left folding a number of functions so that
+
+```python
+chained([a, b, c, d])(input)
+
+d(c(b(a(input))))
+```
+
+My way of doing it:
+```python
+def chained(functions):
+    c_f = lambda f1, f2: lambda x: f2(f1(x))
+    result = lambda x: x
+    for f in functions:
+        result = c_f(result, f)
+    return result
+```
+
+Best practices way:
+```python
+def chained(functions):
+    def chain(input):
+        for f in functions:
+            input = f(input)
+        return input
+    return chain
+```
+
+Another way using functools.reduce:
+```python
+from functools import reduce
+
+def chained(functions):
+    return lambda x: reduce(lambda v, f: f(v), functions, x)
 ```

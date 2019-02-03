@@ -224,5 +224,57 @@ code span.wa { color: #7f9f7f; font-weight: bold; } /* Warning */
 <a class="sourceLine" id="cb21-6" data-line-number="6"></a>
 <a class="sourceLine" id="cb21-7" data-line-number="7"><span class="cf">if</span> args.URL:</a>
 <a class="sourceLine" id="cb21-8" data-line-number="8">    <span class="bu">print</span>(<span class="st">&#39;Set URL to </span><span class="sc">%s</span><span class="st">&#39;</span> <span class="op">%</span> args.URL)</a></code></pre></div>
+<h3 id="functions">Functions</h3>
+<h5 id="codewars-calculating-with-functions---a-function-for-each-number-and-operator.">Codewars “Calculating with functions” - a function for each number and operator.</h5>
+<p>Two clever ways of doing this: 1) return a lambda function for the first argument:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="kw">def</span> zero(f <span class="op">=</span> <span class="va">None</span>): <span class="cf">return</span> <span class="dv">0</span> <span class="cf">if</span> <span class="kw">not</span> f <span class="cf">else</span> f(<span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb22-2" data-line-number="2"><span class="kw">def</span> one(f <span class="op">=</span> <span class="va">None</span>): <span class="cf">return</span> <span class="dv">1</span> <span class="cf">if</span> <span class="kw">not</span> f <span class="cf">else</span> f(<span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb22-3" data-line-number="3"><span class="kw">def</span> two(f <span class="op">=</span> <span class="va">None</span>): <span class="cf">return</span> <span class="dv">2</span> <span class="cf">if</span> <span class="kw">not</span> f <span class="cf">else</span> f(<span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb22-4" data-line-number="4"><span class="kw">def</span> three(f <span class="op">=</span> <span class="va">None</span>): <span class="cf">return</span> <span class="dv">3</span> <span class="cf">if</span> <span class="kw">not</span> f <span class="cf">else</span> f(<span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb22-5" data-line-number="5"><span class="kw">def</span> four(f <span class="op">=</span> <span class="va">None</span>): <span class="cf">return</span> <span class="dv">4</span> <span class="cf">if</span> <span class="kw">not</span> f <span class="cf">else</span> f(<span class="dv">4</span>)</a>
+<a class="sourceLine" id="cb22-6" data-line-number="6"><span class="kw">def</span> five(f <span class="op">=</span> <span class="va">None</span>): <span class="cf">return</span> <span class="dv">5</span> <span class="cf">if</span> <span class="kw">not</span> f <span class="cf">else</span> f(<span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb22-7" data-line-number="7"><span class="kw">def</span> six(f <span class="op">=</span> <span class="va">None</span>): <span class="cf">return</span> <span class="dv">6</span> <span class="cf">if</span> <span class="kw">not</span> f <span class="cf">else</span> f(<span class="dv">6</span>)</a>
+<a class="sourceLine" id="cb22-8" data-line-number="8"><span class="kw">def</span> seven(f <span class="op">=</span> <span class="va">None</span>): <span class="cf">return</span> <span class="dv">7</span> <span class="cf">if</span> <span class="kw">not</span> f <span class="cf">else</span> f(<span class="dv">7</span>)</a>
+<a class="sourceLine" id="cb22-9" data-line-number="9"><span class="kw">def</span> eight(f <span class="op">=</span> <span class="va">None</span>): <span class="cf">return</span> <span class="dv">8</span> <span class="cf">if</span> <span class="kw">not</span> f <span class="cf">else</span> f(<span class="dv">8</span>)</a>
+<a class="sourceLine" id="cb22-10" data-line-number="10"><span class="kw">def</span> nine(f <span class="op">=</span> <span class="va">None</span>): <span class="cf">return</span> <span class="dv">9</span> <span class="cf">if</span> <span class="kw">not</span> f <span class="cf">else</span> f(<span class="dv">9</span>)</a>
+<a class="sourceLine" id="cb22-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb22-12" data-line-number="12"><span class="kw">def</span> plus(y): <span class="cf">return</span> <span class="kw">lambda</span> x: x<span class="op">+</span>y</a>
+<a class="sourceLine" id="cb22-13" data-line-number="13"><span class="kw">def</span> minus(y): <span class="cf">return</span> <span class="kw">lambda</span> x: x<span class="op">-</span>y</a>
+<a class="sourceLine" id="cb22-14" data-line-number="14"><span class="kw">def</span> times(y): <span class="cf">return</span> <span class="kw">lambda</span>  x: x<span class="op">*</span>y</a>
+<a class="sourceLine" id="cb22-15" data-line-number="15"><span class="kw">def</span> divided_by(y): <span class="cf">return</span> <span class="kw">lambda</span>  x: x<span class="op">/</span>y</a></code></pre></div>
+<ol start="2" type="1">
+<li>using more lambdas… and mapping the names to numbers</li>
+</ol>
+<div class="sourceCode" id="cb23"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb23-1" data-line-number="1">id_ <span class="op">=</span> <span class="kw">lambda</span> x: x</a>
+<a class="sourceLine" id="cb23-2" data-line-number="2">number <span class="op">=</span> <span class="kw">lambda</span> x: <span class="kw">lambda</span> f<span class="op">=</span>id_: f(x)</a>
+<a class="sourceLine" id="cb23-3" data-line-number="3">zero, one, two, three, four, five, six, seven, eight, nine <span class="op">=</span> <span class="bu">map</span>(number, <span class="bu">range</span>(<span class="dv">10</span>))</a>
+<a class="sourceLine" id="cb23-4" data-line-number="4">plus <span class="op">=</span> <span class="kw">lambda</span> x: <span class="kw">lambda</span> y: y <span class="op">+</span> x</a>
+<a class="sourceLine" id="cb23-5" data-line-number="5">minus <span class="op">=</span> <span class="kw">lambda</span> x: <span class="kw">lambda</span> y: y <span class="op">-</span> x</a>
+<a class="sourceLine" id="cb23-6" data-line-number="6">times <span class="op">=</span> <span class="kw">lambda</span> x: <span class="kw">lambda</span> y: y <span class="op">*</span> x</a>
+<a class="sourceLine" id="cb23-7" data-line-number="7">divided_by <span class="op">=</span> <span class="kw">lambda</span> x: <span class="kw">lambda</span> y: y <span class="op">/</span> x</a></code></pre></div>
+<h5 id="codewars-unary-function-chain---chain-a-number-of-functions">Codewars “Unary function chain” - chain a number of functions</h5>
+<p>Left folding a number of functions so that</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb24-1" data-line-number="1">chained([a, b, c, d])(<span class="bu">input</span>)</a>
+<a class="sourceLine" id="cb24-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb24-3" data-line-number="3">d(c(b(a(<span class="bu">input</span>))))</a></code></pre></div>
+<p>My way of doing it:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="kw">def</span> chained(functions):</a>
+<a class="sourceLine" id="cb25-2" data-line-number="2">    c_f <span class="op">=</span> <span class="kw">lambda</span> f1, f2: <span class="kw">lambda</span> x: f2(f1(x))</a>
+<a class="sourceLine" id="cb25-3" data-line-number="3">    result <span class="op">=</span> <span class="kw">lambda</span> x: x</a>
+<a class="sourceLine" id="cb25-4" data-line-number="4">    <span class="cf">for</span> f <span class="kw">in</span> functions:</a>
+<a class="sourceLine" id="cb25-5" data-line-number="5">        result <span class="op">=</span> c_f(result, f)</a>
+<a class="sourceLine" id="cb25-6" data-line-number="6">    <span class="cf">return</span> result</a></code></pre></div>
+<p>Best practices way:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="kw">def</span> chained(functions):</a>
+<a class="sourceLine" id="cb26-2" data-line-number="2">    <span class="kw">def</span> chain(<span class="bu">input</span>):</a>
+<a class="sourceLine" id="cb26-3" data-line-number="3">        <span class="cf">for</span> f <span class="kw">in</span> functions:</a>
+<a class="sourceLine" id="cb26-4" data-line-number="4">            <span class="bu">input</span> <span class="op">=</span> f(<span class="bu">input</span>)</a>
+<a class="sourceLine" id="cb26-5" data-line-number="5">        <span class="cf">return</span> <span class="bu">input</span></a>
+<a class="sourceLine" id="cb26-6" data-line-number="6">    <span class="cf">return</span> chain</a></code></pre></div>
+<p>Another way using functools.reduce:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="im">from</span> functools <span class="im">import</span> <span class="bu">reduce</span></a>
+<a class="sourceLine" id="cb27-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb27-3" data-line-number="3"><span class="kw">def</span> chained(functions):</a>
+<a class="sourceLine" id="cb27-4" data-line-number="4">    <span class="cf">return</span> <span class="kw">lambda</span> x: <span class="bu">reduce</span>(<span class="kw">lambda</span> v, f: f(v), functions, x)</a></code></pre></div>
 </body>
 </html>
