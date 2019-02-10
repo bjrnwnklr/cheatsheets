@@ -210,6 +210,46 @@ if args.URL:
     print('Set URL to %s' % args.URL)
 ```
 
+### Exceptions
+##### Raising your own exception
+
+1) Define your own deception by inheriting from the `Exception` class:
+
+```python
+class ElfDeadException(Exception):
+        def __init__(self, message):
+            self.message = message
+```
+
+2) Raise the exception in the code
+
+```python
+if hp <= 0:
+    alive = False
+    raise ElfDeadException('Elf %s died!' % elf)
+```
+
+3) Catch the exception and do something with it
+
+```python
+try:
+    # execute some code where the exception could occur
+
+except ElfDeadException as elf_dead_exception:
+    # do something with the exception, e.g. print
+    print(elf_dead_exception)
+    # you can also "continue" here to go back to a loop
+    continue
+
+else:
+    # this gets executed if code completed and no exception was caught
+    print('No exception, code successfully completed')
+
+finally:
+    # this gets executed no matter what. You can clean up e.g. close a file
+    print('cleaning up!')
+```
+
 ### Functions
 ##### Codewars "Calculating with functions" - a function for each number and operator.
 
