@@ -1,7 +1,7 @@
 ---
 title: Bjoern's Python cheat sheet
 author: Bjoern Winkler
-date: 26-01-2019
+date: 10-02-2019
 ...
 
 
@@ -93,6 +93,20 @@ new_text = text.replace('text to be replaced', '')
 val = ''.join(x[i] for i in range(i-2, i+3))
 ```
 
+##### replacing multiple elements in a string
+
+From codewars.com - rot13
+
+Using translations, rotate each letter (not digits or special chars) by 13 letters. Clever use of slices.
+
+```python
+from string import maketrans, lowercase, uppercase
+
+def rot13(message):
+    lower = maketrans(lowercase, lowercase[13:] + lowercase[:13])
+    upper = maketrans(uppercase, uppercase[13:] + uppercase[:13])
+    return message.translate(lower).translate(upper)
+```
 
 ### Regular expressions
 ##### finding and returning the first match of two repeating letters
