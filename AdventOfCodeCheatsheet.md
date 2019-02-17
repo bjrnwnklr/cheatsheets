@@ -34,14 +34,14 @@ Lines look like
     #3 @ 5,5: 2x2
 
 ```python
-# regex to find all numbers (\d) with 1 or more digits (+)
+# regex to find all numbers (\d) with 1 or more digits (+) and optional '-' for negative numbers ('-?' (? = 0 or 1))
 # map converts them to int tuples
 # * unpacks the output
 import re
 
 input_file = open(r'filename.txt', 'r')
 
-claims = [[*map(int, re.findall(r'\d+', l))] for l in input_file.splitlines() if l]
+claims = [[*map(int, re.findall(r'-?\d+', l))] for l in input_file.splitlines() if l]
 ```
 
 ## 2. Splitting input into a list of tuples and converting to int at the same time
