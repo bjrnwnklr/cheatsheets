@@ -1,9 +1,3 @@
----
-title: Bjoern's NumPy cheat sheet
-author: Bjoern Winkler
-date: 18-02-2019
-...
-
 # Numpy basics
 
 ## Creating ndarrays
