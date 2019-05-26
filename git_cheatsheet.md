@@ -2,9 +2,16 @@
 title: Bjoern's Git cheat sheet
 author: Bjoern Winkler
 date: 26-01-2019
-...
+---
 
 # Git cheat sheet
+
+# Initialize a new remote repo with an existing local repo from command line
+
+    ```
+    $ git remote add origin https://bjrnwnklr@dev.azure.com/bjrnwnklr/BulmaTest/_git/BulmaTest
+    $ git push -u origin --all
+    ```
 
 ### Revert a single file back to a previous version
 1) Find commit history of the file:
