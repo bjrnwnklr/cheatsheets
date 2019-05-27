@@ -2,7 +2,7 @@
 title: Bjoern's Python cheat sheet
 author: Bjoern Winkler
 date: 10-02-2019
-...
+---
 
 
 ### Lists
