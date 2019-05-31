@@ -92,3 +92,45 @@ async function myFetch() {
 
 myFetch();
 ```
+
+Full example with a POST request and error handling:
+
+```js
+function submit() {
+    // Get text input
+    const textInput = document.getElementById('input_text').value;
+    if (textInput !== "") {
+        const sentimentRequest = JSON.stringify({
+            'text' : textInput
+        });
+
+        // call the fetch function (similar to XMLHttpRequest)
+        fetchSentiment(sentimentRequest)
+            .then(response => {
+                // now process the response and call the function to update the website
+                updateWebsite(response);
+            }) 
+            .catch(error => {
+                // error handling
+                console.error(error);
+            });
+    }
+}
+
+// execute a POST request using the async / await / fetch functions
+// return the json response object
+async function fetchSentiment(data) {
+    const config = {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: data
+    }
+
+    const response = await fetch('/sentiment', config);
+    const res_json = await response.json();
+    return res_json;
+}
+```
