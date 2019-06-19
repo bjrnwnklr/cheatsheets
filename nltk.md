@@ -76,3 +76,38 @@ def lexical_diversity(text):
     return len(set(text)) / len(text)
 ```
 
+# Frequency distribution
+
+Frequency distribution can generated with the `FreqDist` object (basically a CountDict):
+
+```python
+fdist1 = FreqDist(text1)
+```
+
+Printing most common words:
+
+```python
+fdist1.most_common(50)
+```
+
+Create a plot:
+
+```python
+fdist1.plot(50, cumulative=True)
+```
+
+# Bigrams and collocations
+
+Bigrams are just word pairs e.g. "of the".
+
+```python
+bigrams = bigrams(text4)
+```
+
+Collocations are 'frequent bigrams' with a few restrictions (rare words that appear more often than average etc)
+
+Note: this doesn't seem to work in the recent versions of NLTK anymore, but is still listed in the book:
+
+```python
+colls = collocations(text4)
+```
