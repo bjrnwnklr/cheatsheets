@@ -1,7 +1,7 @@
 ---
 title: Bjoern's Git cheat sheet
 author: Bjoern Winkler
-date: 26-01-2019
+date: 23-June-2019
 ---
 
 # Git cheat sheet
@@ -13,7 +13,65 @@ date: 26-01-2019
     $ git push -u origin --all
     ```
 
-### Revert a single file back to a previous version
+
+# Working with branches
+
+## Create local branch
+
+Create a local branch, change code and merge with `master`
+
+```
+$ git checkout -b <branch-name>
+# do the code changes...
+$ git add --all
+$ git commit -m "Commit message"
+$ git checkout master
+$ git merge <branch-name>
+$ git push
+$ git branch -d <branch-name>
+```
+
+## Create local branch and push to remote
+
+Create a local branch, commit locally, then push the branch to master
+
+```
+$ git checkout -b <branch-name>
+$ git push -u origin <branch-name>
+# do your code changes...
+$ git add --all
+$ git commit -m "Commit message"
+$ git push
+
+$ git checkout master
+$ git pull
+$ git pull origin <branch-name>
+$ git push
+```
+
+# Use `git log` to find changes to a specific function
+
+With the `git log -L :<funcname>:<filename>`, you can see the version history of a specific function:
+
+```
+$ git log -L :get_regex:regex-search.py
+```
+
+# Use `git grep` to search through repository (or other files)
+
+Useful options:
+
+- -i: case insensitive
+- -n: line numbers
+- --perl-regexp: use Python like regex 
+- --no-index: search through files not indexed by git e.g. in .gitignore
+- -e <regex>: search for regex e.g. \d+ to find numbers
+
+```
+$ git grep -i -n --perl-regexp --no-index -e pass(word|phrase)
+```
+
+# Revert a single file back to a previous version
 1) Find commit history of the file:
 
     ```
