@@ -111,3 +111,30 @@ Note: this doesn't seem to work in the recent versions of NLTK anymore, but is s
 ```python
 colls = collocations(text4)
 ```
+
+# Reading own corpus data
+
+Reading in text based corpora using the `PlainTextCorpusReader`:
+
+```python
+from nltk.corpus import PlaintextCorpusReader
+corpus_root = '/usr/share/dict' [1]
+wordlists = PlaintextCorpusReader(corpus_root, '.*') [2]
+wordlists.fileids()
+wordlists.words('filename')
+```
+
+You can then use the typical corpus methods like `words`, `fileids` and `sents`.
+
+# Conditional Frequency Analysis
+
+Conditional frequency analysis is used to count events by conditions, e.g. occurance of words by text category. The `ConditionalFreqDist` function takes `(condition, event)` tuples.
+
+```python
+from nltk.corpus import brown
+cfd = nltk.ConditionalFreqDist(
+    (genre, word)
+    for genre in brown.categories()
+    for word in brown.words(categories=genre)
+)
+```
