@@ -138,3 +138,49 @@ cfd = nltk.ConditionalFreqDist(
     for word in brown.words(categories=genre)
 )
 ```
+# Using WordNet
+
+WordNet is a semantically-oriented dictionary of English, similar to a traditional thesaurus but with a richer structure. NLTK includes the English WordNet, with 155,287 words and 117,659 synonym sets.
+
+Loading WordNet:
+
+```python
+from nltk.corpus import wordnet as wn
+```
+
+Synsets are synonym sets i.e. similar words:
+
+```python
+wn.synsets('motorcar')
+```
+
+Synsets have a format of `car.n.01` - the name of the synset, the type (n = noun) and a running number (if there is more than one synonym).
+
+Synonymous words are called `lemmas`.
+
+```python
+wn.synsets('car.n.01').lemmas()
+```
+
+Each synset has a number of hierarchical information:
+
+- Definitions:
+```python
+wn.synsets('car.n.01').definition()
+```
+
+- Examples:
+```python
+wn.synsets('car.n.01').examples()
+```
+
+- Hypernyms (up the hierarchy, i.e. more general)
+```python
+wn.synsets('car.n.01').hypernyms()
+```
+
+- Hyponyms (down the hierarchy, more specific)
+```python
+wn.synsets('car.n.01').hyponyms()
+```
+
