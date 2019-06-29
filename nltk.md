@@ -184,3 +184,31 @@ wn.synsets('car.n.01').hypernyms()
 wn.synsets('car.n.01').hyponyms()
 ```
 
+# Cleaning up text
+
+Cleaning up text can be complex. [This](https://machinelearningmastery.com/clean-text-machine-learning-python/) has a good summary of the various ways to clean up text.
+
+Clean up is typically
+- splitting into words
+- converting to lower case
+- removing punctuation
+
+## Manual clean up
+
+```python
+def cleanup(text):
+    # split into words
+    review = str(text).strip().split()
+    
+    # manual removal of punctuation - not really good as it leaves '.' at the end of sentences
+    # clean_text = [w for w in review.split() if w not in punctuation]
+
+    # removal with a translation table - much better
+    table = str.maketrans('', '', punctuation)
+    clean_text = [w.translate(table) for w in review]
+
+    # convert to lower case
+    clean_text = [w.lower() for w in clean_text]
+    return clean_text
+```
+
