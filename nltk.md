@@ -212,3 +212,96 @@ def cleanup(text):
     return clean_text
 ```
 
+Another way of cleaning up is listed [here](http://kavita-ganesan.com/extracting-keywords-from-text-tfidf/):
+
+```python
+import re
+def pre_process(text):
+    
+    # lowercase
+    text=text.lower()
+    
+    #remove tags
+    text=re.sub("<!--?.*?-->","",text)
+    
+    # remove special characters and digits
+    text=re.sub("(\\d|\\W)+"," ",text)
+    
+    return text
+```
+
+# `scikit-learn` with `CountVectorizer` - no clean up required before
+
+The scikit-learn homepage has a [tutorial](https://scikit-learn.org/stable/tutorial/text_analytics/working_with_text_data.html), which includes using the `CountVectorizer` and the `TfidfTransform` objects.
+
+## Tokenizing text with scikit-learn
+
+Text preprocessing, tokenizing and filtering of stopwords are all included in CountVectorizer, which builds a dictionary of features and transforms documents to feature vectors:
+
+```python
+from sklearn.feature_extraction.text import CountVectorizer
+count_vect = CountVectorizer()
+X_train_counts = count_vect.fit_transform(twenty_train.data)
+X_train_counts.shape
+```
+
+CountVectorizer supports counts of N-grams of words or consecutive characters. Once fitted, the vectorizer has built a dictionary of feature indices:
+
+```python
+count_vect.vocabulary_.get(u'algorithm')
+4690
+```
+
+The index value of a word in the vocabulary is linked to its frequency in the whole training corpus.
+
+## Using TF-IDF to determine key words
+
+TF-IDF stands for `Term frequency * Inverse Document Frequency`. Term frequency is the frequency how often a term appears in a document (divide the number the term appears by the total terms in the document), the inverse document frequency is how often the term appears overall in the corpus.
+
+
+Both tf and tf–idf can be computed as follows using TfidfTransformer:
+
+```python
+from sklearn.feature_extraction.text import TfidfTransformer
+tf_transformer = TfidfTransformer(use_idf=False).fit(X_train_counts)
+X_train_tf = tf_transformer.transform(X_train_counts)
+X_train_tf.shape
+(2257, 35788)
+```
+
+## Combining CountVectorizer and Tfidf analysis
+
+As tf–idf is very often used for text features, there is also another class called TfidfVectorizer that combines all the options of CountVectorizer and TfidfTransformer in a single model:
+
+```python
+from sklearn.feature_extraction.text import TfidfVectorizer
+vectorizer = TfidfVectorizer()
+vectorizer.fit_transform(corpus)
+...                                
+<4x9 sparse matrix of type '<... 'numpy.float64'>'
+    with 19 stored elements in Compressed Sparse ... format>
+```
+
+
+There is a good example how to access the results from the TfidfTransformer [here](http://kavita-ganesan.com/tfidftransformer-tfidfvectorizer-usage-differences/).
+
+Easiest is to create a Pandas DataFrame, which is then sorted...
+
+Alternatively, zip the feature names together with the results from the Tfidf matrix and sort again.
+
+```python
+# Create the TfidfTransformer, using the CountVectorizer output (which has the frequencies of the words)
+tfidf_transformer = TfidfTransformer()
+test_idf = tfidf_transformer.fit_transform(word_count_vector)
+
+# get the feature names (i.e. the words) from the word count vector
+feature_names = cv.get_feature_names()
+
+# use our first document (review) as an example to see the scores for the words in the document
+first_doc = test_idf[1]
+
+# convert into a Pandas DataFrame and display the highest scored words
+# - need to use `T` to create a Series as toarray would create a column for each word
+key_words = pd.DataFrame(first_doc.T.toarray(), index=feature_names)
+key_words.sort_values(by=0, ascending=False)[:15]
+```
