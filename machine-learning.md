@@ -1,3 +1,9 @@
+---
+title: Machine Learning with scikit-learn cheatsheet
+author: Bjoern Winkler
+date: 7-July-2019
+---
+
 # Machine Learning with scikit-learn
 
 Following the "Intro to Machine Learning with Python" book
