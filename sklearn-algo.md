@@ -8,6 +8,50 @@ date: 7-July-2019
 
 My summary cheatsheet of machine learning algorithms in `scikit-learn`.
 
+
+# Plotting a linear regression / dataset
+
+This will come in handy to plot data, e.g. from the ISLR (Introduction to Statistical Learning) book:
+
+```python
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+
+# read csv file - Advertising data. Don't read in the first column, which is an index
+df = pd.read_csv('islr-data/Advertising.csv', usecols=range(1, 5))
+
+# get column names
+adv_feature_names = list(df.columns)
+
+# calculate coefficient and intercept for X, y data and return linear regression function
+def get_lr(X, y):
+    lr = LinearRegression().fit(X, y)
+    return lambda x: x * lr.coef_[0] + lr.intercept_
+
+# create a plot for TV cs sales
+fig, axes = plt.subplots(1, 3, figsize=(12, 5))
+
+# plot each feature against sales and add a linear regression line
+for ax, feature in zip(axes, adv_feature_names):
+    # get the column data and the sales data
+    X, y = df[feature].values, df['sales']
+    
+    # plot the data points
+    ax.plot(X, y, 'ro', fillstyle='none')
+    
+    # get a linear regression function for the data. Need to reshape from column to row
+    # create a continuous line and plot the values
+    f = get_lr(X.reshape(-1, 1), y)
+    x_line = np.linspace(0, X.max(), 1000)
+    ax.plot(x_line, f(x_line))
+    
+    # set axis labels
+    ax.set_ylabel('Sales')
+    ax.set_xlabel(feature)
+```
+
 # Classification algorithms
 
 ### _k_-Nearest Neighbor Classification (_k_ NN)
