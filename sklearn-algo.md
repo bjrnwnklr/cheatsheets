@@ -95,4 +95,24 @@ ridge = Ridge().fit(X_train, y_train)
 ```
 
 **Parameters:** 
-- `alpha` (default: 1.0): restriction of the coefficients. Increasing `alpha` forces coefficients towars zero, which decreases training set performance but might help generalization.
+- `alpha` (default: 1.0): restriction of the coefficients. Increasing `alpha` forces coefficients towards zero, which decreases training set performance but might help generalization. For very small values of `alpha`, RidgeRegression is similar to LinearRegression.
+
+For datasets with very few features, Ridge, Linear and Lasso produce very similar results, regardless of the parameter settings.
+
+### Lasso regression
+
+```python
+from sklearn.linear_model import Lasso
+
+lasso = Lasso().fit(X_train, y_train)
+print("Number of features used:", np.sum(lasso.coef_ != 0))
+
+lasso001 = Lasso(alpha=0.01, max_iter=100000).fit(X_train, y_train)
+```
+
+**Parameters:**
+- `alpha` (default: 1.0): restriction of the coefficients. Similarly to Ridge, the Lasso also has a regularization parameter, alpha, that controls how strongly coefficients are pushed toward zero. To _reduce underfitting_, try decreasing alpha. When we do this, we also need to increase the default setting of `max_iter` (the maximum number of iterations to run).
+
+**Usage:** In practice, _ridge regression is usually the first choice between these two models_. However, if you have a large amount of features and expect only a few of them to be important, Lasso might be a better choice.
+
+

@@ -155,3 +155,17 @@ How much importance the model places on simplicity versus training set performan
 
 For very small values of alpha, coefficients are barely restricted at all, and we end up with a model that resembles LinearRegression.
 
+Since `alpha` corresponds to the model complexity, for very simple models i.e. with only a few features, the `alpha` parameter does not have any impact on the results / scoring.
+
+### Lasso regression
+
+An alternative to Ridge for regularizing linear regression is Lasso. As with ridge regression, the lasso also restricts coefficients to be close to zero, but in a slightly different way, called _L1 regularization_. The consequence of L1 regularization is that when using the lasso, some coefficients are exactly zero. This means some features are entirely ignored by the model. This can be seen as a form of automatic feature selection. Having some coefficients be exactly zero often makes a model easier to interpret, and can reveal the most important features of your model.
+
+```python
+from sklearn.linear_model import Lasso
+
+lasso = Lasso().fit(X_train, y_train)
+print("Number of features used:", np.sum(lasso.coef_ != 0))
+```
+
+ Similarly, if you would like to have a model that is easy to interpret, Lasso will provide a model that is easier to understand, as it will select only a subset of the input features. scikit-learn also provides the `ElasticNet` class, which combines the penalties of Lasso and Ridge. In practice, this combination works best, though at the price of having two parameters to adjust: one for the L1 regularization, and one for the L2 regularization.
