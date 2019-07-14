@@ -52,7 +52,7 @@ An easy way to distinguish between classification and regression tasks is to ask
 
 If a model is able to make accurate predictions on unseen data, we say it is able to _generalize_ from the training set to the test set.
 
-Building a model that is too complex for the amount of information we have is called _overfitting_. Overfitting occurs when you fit a model too closely to the particularities of the training set and obtain a model that works well on the training set but is not able to generalize to new data. On the other hand, if your model is too simple you might not be able to capture all the aspects of and variability in the data, and your model will do badly even on the training set. Choosing too simple a model is called _underfitting_.
+Building a model that is too complex for the amount of information we have is called _overfitting_. Overfitting occurs when you fit a model too closely to the particularities of the training set and obtain a model that works well on the training set but is not able to generalize to new data. The model is _following the noise too closely._ On the other hand, if your model is too simple you might not be able to capture all the aspects of and variability in the data, and your model will do badly even on the training set. Choosing too simple a model is called _underfitting_.
 
 ## Supervised Machine Learning Algorithms
 
