@@ -78,9 +78,9 @@ _Bias_ refers to the error that is introduced by approximating a real-life probl
 
 As a general rule, as we use more flexible methods, the variance will increase and the bias will decrease.
 
-## Supervised Machine Learning Algorithms
+# Supervised Machine Learning Algorithms
 
-### k-Nearest Neighbors
+## k-Nearest Neighbors
 
 The `k-NN algorithm` is arguably the simplest machine learning algorithm. Building the model consists only of storing the training dataset. To make a prediction for a new data point, the algorithm finds the closest data points in the training dataset—its “nearest neighbors.”
 
