@@ -2,6 +2,16 @@
 
 # Basics
 
+## Slicing
+
+Slicing in Pandas works by using either the `loc` (based on names) or `iloc` (by index) methods:
+
+```python
+df.iloc[:, 0] # selects all rows, first column from pandas dataframe
+
+ndarray[:, 0] # selects all rows, first column from numpy ndarray
+```
+
 ## Counting unique values
 
 This returns a pd.Series object, sorted by the most frequent items:

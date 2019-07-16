@@ -36,7 +36,9 @@ Three main methods to remember:
 
 `fit`, `predict` and `score`.
 
-# 2. Supervised Learning
+# 2. Statistical Learning - key terms
+
+With some terms from the ISLR book.
 
 ## Classification, regression
 
@@ -53,6 +55,28 @@ An easy way to distinguish between classification and regression tasks is to ask
 If a model is able to make accurate predictions on unseen data, we say it is able to _generalize_ from the training set to the test set.
 
 Building a model that is too complex for the amount of information we have is called _overfitting_. Overfitting occurs when you fit a model too closely to the particularities of the training set and obtain a model that works well on the training set but is not able to generalize to new data. The model is _following the noise too closely._ On the other hand, if your model is too simple you might not be able to capture all the aspects of and variability in the data, and your model will do badly even on the training set. Choosing too simple a model is called _underfitting_.
+
+## MSE, variance, bias
+
+### MSE 
+
+MSE = _Mean Squared Error_ - mostly used in Regression settings. _Training MSE_ describes the accuracy of the training model (individual predictions vs the actual training data). _Test MSE_ describes the accuracy of the predictions that are obtained when applying the method to previously unseen test data.
+
+The problem is that _many statistical methods specifically estimate coefficients so as to minimize the training set MSE_.
+
+As _model flexibility increases_, training MSE will decrease, but the test MSE may not. _Overfitting_ happens when a method produces a small training MSE but a large test MSE.
+
+### Variance and bias
+
+The expected test MSE can be decomposed into the sum of three fundamental quantities: the _variance_ of the prediction _f^(x0)_, the squared _bias_ of _f^(x0)_ and the variance of the error terms.
+
+Since both variance and the squared bias are positive, the test MSE can never be less than the _irreducible error_ (ther variance of the error term here).
+
+_Variance_ refers to the amount by which the prediction function would change if we estimated it using a different training data set. In general, _more flexible statistical methods have higher variance_ (as the method will try to fit each individual training observation more closely compared to a inflexible method like linear regression).
+
+_Bias_ refers to the error that is introduced by approximating a real-life problem, which may be extremely complicated, by a much simpler model. Linear regression (a very simple model) can result in very high bias if the real life problem is not linear at all. Generally, _more flexible methods result in less bias_.
+
+As a general rule, as we use more flexible methods, the variance will increase and the bias will decrease.
 
 ## Supervised Machine Learning Algorithms
 

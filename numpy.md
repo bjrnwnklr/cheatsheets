@@ -35,7 +35,9 @@ np.eye(3)           # Create a square N × N identity matrix (1s on the diagonal
 
 np.arange(10)       # like range(10)
 
-np.random.randn(7, 4)   # creates random distr across 7 x 4 matrix
+np.random.randn(7, 4)   # creates random distr across 7 x 4 matrix (normal distribution around 0, var 1)
+
+np.random.random((10, 10)) # creates uniform random numbers in 10 x 10 matrix
 ```
 
 ### Changing the dtype of an array
