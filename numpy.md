@@ -38,6 +38,8 @@ np.arange(10)       # like range(10)
 np.random.randn(7, 4)   # creates random distr across 7 x 4 matrix (normal distribution around 0, var 1)
 
 np.random.random((10, 10)) # creates uniform random numbers in 10 x 10 matrix
+
+np.random.randint(-10, 10, (10, 10)) # creates random integer (from -10 to 10) 10x10 matrix
 ```
 
 ### Changing the dtype of an array
