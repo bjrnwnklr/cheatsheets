@@ -230,11 +230,76 @@ def pre_process(text):
     return text
 ```
 
+## Using Tokenizer, Stemmer and Lemmatizer to clean up
+
+Good example [here](https://towardsdatascience.com/a-practitioners-guide-to-natural-language-processing-part-i-processing-understanding-text-9f4abfd13e72) and in the [O'Reilly - Applied Text Analysis with Python book](https://learning.oreilly.com/library/view/applied-text-analysis/9781491963036/ch04.html#ATAP04)
+
+### Tokenizers
+
+You can use:
+- `nltk.word_tokenize(text)` - this splits by whitespace and other symbols like quotes (e.g. splits "don't" into "do" and "n't" - so not really useful)
+- `nltk.tokenizer.toktok.ToktokTokenizer.tokenize(text)` - this seems to preserve contractions e.g. "don't"
+
+Example:
+
+```python
+import nltk.word_tokenize
+
+word = word_tokenize(word)
+```
+
+```python
+from nltk.tokenizer.toktok import ToktokTokenizer
+
+tokenizer = ToktokTokenizer()
+word = tokenizer.tokenize(word)
+```
+
+### Stemmer
+
+You can use:
+- `nltk.stem.SnowballStemmer`
+- `nltk.stem.PorterStemmer`
+
+They all produce word stems that are not phonetically / grammatically correct e.g. "realli" instead of "really". This might be useful in some cases but be aware of it.
+
+Example:
+
+```python
+from nltk.stem import SnowballStemmer
+
+def snowball_tokenize(text):
+    stem = SnowballStemmer('english')
+    text = text.lower()
+
+    for token in tokenizer.tokenize(text):
+        if (token in string.punctuation or token in stopwords.words('english')): 
+            continue
+        yield stem.stem(token)
+```
+
+### Lemmatizer
+
+You can use:
+- `nltk.stem.WordNetLemmatizer` - slow but produces good results
+
+Example:
+
+```python
+def wordnet_tokenize(text):
+    lem = WordNetLemmatizer()
+    text = text.lower()
+    
+    for token in tokenizer.tokenize(text):
+        if token in string.punctuation or token in stopwords.words('english'): continue
+        yield lem.lemmatize(token)
+```
+
 # `scikit-learn` with `CountVectorizer` - no clean up required before
 
 The scikit-learn homepage has a [tutorial](https://scikit-learn.org/stable/tutorial/text_analytics/working_with_text_data.html), which includes using the `CountVectorizer` and the `TfidfTransform` objects.
 
-## Tokenizing text with scikit-learn
+## Tokenizing text with scikit-learn - CountVectorizer
 
 Text preprocessing, tokenizing and filtering of stopwords are all included in CountVectorizer, which builds a dictionary of features and transforms documents to feature vectors:
 
@@ -250,6 +315,76 @@ CountVectorizer supports counts of N-grams of words or consecutive characters. O
 ```python
 count_vect.vocabulary_.get(u'algorithm')
 4690
+```
+
+### Using CountVectorizer to create a Term Frequency Matrix
+
+Term Frequency Matrix = table with rows (one for each document) and columns (one for each word - _feature_).
+
+```python
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from nltk.corpus import stopwords
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from wordcloud import WordCloud
+
+# read in and clean up the data
+raw_data = pd.read_csv(r'data\1429_1.csv')
+# select relevant columns, drop empty value rows, reset index to continouos integers
+reviews_df = (raw_data[['reviews.rating', 'reviews.text', 'reviews.title']]
+              .dropna()
+              .reset_index(drop=True))
+reviews_df['comb_text'] = reviews_df['reviews.title'] + ' ' + reviews_df['reviews.text']
+
+# generate list of ratings
+ratings = reviews_df['reviews.rating'].value_counts().sort_index().index
+
+# generate count vector
+# list of stop words
+extra_stp = ['amazon', 'kindle', 'fire', 'prime', 'tablet']
+stp = set(stopwords.words('english') + extra_stp)
+
+# create the count vector
+count_vector_2 = CountVectorizer(strip_accents='unicode', stop_words=stp)
+cv_2 = count_vector_2.fit_transform(reviews_df['comb_text'])
+
+###########
+# create term frequency matrix by document
+# --- This is the critical step ---
+###########
+df_cv_2 = pd.DataFrame(cv_2.toarray(), columns=count_vector_2.get_feature_names())
+
+# now do a matrix per rating
+# term frequency matrix for the whole corpus (sum all rows for each column)
+cv_tfms_2 = {}
+for rating in ratings:
+    cv_tfms_2[rating] = pd.DataFrame(df_cv_2[reviews_df['reviews.rating'] == rating].sum(axis=0))
+
+    # rename main column
+    cv_tfms_2[rating].columns=['term_freq']
+
+# Select words in 95th quantile - i.e. the most frequent 5% of words in each rating category
+# generate a word cloud
+quantiles_2 = {}
+for rating in ratings:
+    wc_df_2 = cv_tfms_2[rating]
+
+    # how often does a word at the 95th quantile appear?
+    quantiles_2[rating] = int(wc_df_2.quantile(0.95))
+    
+    # restrict the data frame to only those frequent words
+    wc_df_2 = pd.DataFrame(wc_df_2[wc_df_2['term_freq'] >= quantiles_2[rating]])
+    
+    # generate a word cloud - needs a dictionary of (word: frequency) pairs
+    wc_dict_2 = wc_df_2.to_dict()['term_freq']    
+    get_wc(wc_dict_2)
+
+# helper function to create a word cloud
+def get_wc(term_dict):
+    wc = WordCloud(background_color='white').fit_words(term_dict)
+    plt.figure(figsize=(10, 5))
+    plt.imshow(wc)
 ```
 
 The index value of a word in the vocabulary is linked to its frequency in the whole training corpus.
