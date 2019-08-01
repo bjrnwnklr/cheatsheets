@@ -1,3 +1,9 @@
+---
+title: Numpy cheatsheet
+author: Bjoern Winkler
+date: 1-Aug-2019
+---
+
 # Numpy basics
 
 ## Creating ndarrays

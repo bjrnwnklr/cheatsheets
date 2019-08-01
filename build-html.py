@@ -35,7 +35,8 @@ if __name__ == '__main__':
             'kate',
             '--toc',
             '--toc-depth',
-            '2'
+            '2',
+            '--mathjax'
         ]
         # print(pandoc_cmd)
         pandoc_output = subprocess.run(pandoc_cmd, capture_output=True)
