@@ -58,7 +58,7 @@ Building a model that is too complex for the amount of information we have is ca
 
 ## MSE, variance, bias
 
-### MSE 
+### MSE
 
 MSE = _Mean Squared Error_ - mostly used in Regression settings. _Training MSE_ describes the accuracy of the training model (individual predictions vs the actual training data). _Test MSE_ describes the accuracy of the predictions that are obtained when applying the method to previously unseen test data.
 
@@ -112,7 +112,7 @@ When using multiple nearest neighbors, the prediction is the average, or mean, o
 
 The k-nearest neighbors algorithm for regression is implemented in the `KNeighborsRegressor` class in scikit-learn. It’s used similarly to `KNeighborsClassifier`.
 
-We can also evaluate the model using the `score` method, which for regressors returns the _R2_ score. The _R2_ score, also known as the coefficient of determination, is a measure of goodness of a prediction for a regression model, and yields a score that’s usually between 0 and 1. A value of 1 corresponds to a perfect prediction, and a value of 0 corresponds to a constant model that just predicts the mean of the training set responses, y_train. The formulation of _R2_ used here can even be negative, which can indicate anticorrelated predictions.
+We can also evaluate the model using the `score` method, which for regressors returns the _R2_ score. The _R2_ score, also known as the coefficient of determination, is a measure of goodness of a prediction for a regression model, and yields a score that’s usually between 0 and 1. A value of 1 corresponds to a perfect prediction, and a value of 0 corresponds to a constant model that just predicts the mean of the training set responses, y*train. The formulation of \_R2* used here can even be negative, which can indicate anticorrelated predictions.
 
 Example:
 
@@ -131,7 +131,7 @@ reg.score(X_test, y_test)
 
 One of the strengths of k-NN is that the model is very easy to understand, and often gives reasonable performance without a lot of adjustments. Using this algorithm is a good baseline method to try before considering more advanced techniques. Building the nearest neighbors model is usually very fast, but when your training set is very large (either in number of features or in number of samples) prediction can be slow. When using the k-NN algorithm, it’s important to preprocess your data. This approach often does not perform well on datasets with many features (hundreds or more), and it does particularly badly with datasets where most features are 0 most of the time (so-called sparse datasets).
 
-So, while the k-nearest neighbors algorithm is easy to understand, it is not often used in practice, due to prediction being slow and its inability to handle many features. 
+So, while the k-nearest neighbors algorithm is easy to understand, it is not often used in practice, due to prediction being slow and its inability to handle many features.
 
 ## Linear models
 
@@ -141,19 +141,23 @@ Linear models make a prediction using a linear function of the input features.
 
 For regression, the general prediction formula for a linear model looks as follows:
 
-ŷ = w[0] * x[0] + w[1] * x[1] + ... + w[p] * x[p] + b
+$$
+\begin{aligned}
+\hat{y} &= w_0 * x_0 + w_1 * x_1 + ... + w_D * x_D + b \\
+\end{aligned}
+$$
 
-Here, _x[0]_ to _x[p]_ denotes the _features_ (in this example, the number of features is p+1) of a single data point, _w_ and _b_ are parameters of the model that are learned, and _ŷ_ is the prediction the model makes. 
+Here, $x_0$ to $x_D$ denotes the _features_ (in this example, the number of features is $D + 1$) of a single data point, $w$ and $w$ are parameters of the model that are learned, and $\hat{y}$ is the prediction the model makes.
 
-Linear algorithms try to determine the _w_ and _b_ parameters. _w_ are called _coefficients_ (`coef_` as output) and _b_ is called _intercept_ (`intercept_` as output).
+Linear algorithms try to determine the $w$ and $b$ parameters. $w$ are called _coefficients_ (`coef_` as output) and $b$ is called _intercept_ (`intercept_` as output).
 
 For datasets with many features, linear models can be very powerful. In particular, if you have more features than training data points, any target y can be perfectly modeled (on the training set) as a linear function.
 
-There are many different linear models for regression. The difference between these models lies in how the model parameters w and b are learned from the training data, and how model complexity can be controlled.
+There are many different linear models for regression. The difference between these models lies in how the model parameters $w$ and $b$ are learned from the training data, and how model complexity can be controlled.
 
 ### Linear regression (aka Ordinary Least Squares, OLS)
 
-Linear regression, or ordinary least squares (OLS), is the simplest and most classic linear method for regression. Linear regression finds the parameters _w_ and _b_ that minimize the mean squared error between predictions and the true regression targets, _y_, on the training set. The mean squared error is the sum of the squared differences between the predictions and the true values, divided by the number of samples. Linear regression has no parameters, which is a benefit, but it also has no way to control model complexity.
+Linear regression, or ordinary least squares (OLS), is the simplest and most classic linear method for regression. Linear regression finds the parameters $w$ and $b$ that minimize the mean squared error between predictions and the true regression targets, $y$, on the training set. The mean squared error is the sum of the squared differences between the predictions and the true values, divided by the number of samples. Linear regression has no parameters, which is a benefit, but it also has no way to control model complexity.
 
 ```python
 from sklearn.linear_model import LinearRegression
@@ -175,7 +179,7 @@ from sklearn.linear_model import Ridge
 ridge = Ridge().fit(X_train, y_train)
 ```
 
-How much importance the model places on simplicity versus training set performance can be specified by the user, using the `alpha` parameter. In the previous example, we used the default parameter `alpha=1.0`. There is no reason why this will give us the best trade-off, though. The optimum setting of alpha depends on the particular dataset we are using. Increasing alpha forces coefficients to move more toward zero, which decreases training set performance but might help generalization. 
+How much importance the model places on simplicity versus training set performance can be specified by the user, using the `alpha` parameter. In the previous example, we used the default parameter `alpha=1.0`. There is no reason why this will give us the best trade-off, though. The optimum setting of alpha depends on the particular dataset we are using. Increasing alpha forces coefficients to move more toward zero, which decreases training set performance but might help generalization.
 
 For very small values of alpha, coefficients are barely restricted at all, and we end up with a model that resembles LinearRegression.
 
@@ -192,4 +196,4 @@ lasso = Lasso().fit(X_train, y_train)
 print("Number of features used:", np.sum(lasso.coef_ != 0))
 ```
 
- Similarly, if you would like to have a model that is easy to interpret, Lasso will provide a model that is easier to understand, as it will select only a subset of the input features. scikit-learn also provides the `ElasticNet` class, which combines the penalties of Lasso and Ridge. In practice, this combination works best, though at the price of having two parameters to adjust: one for the L1 regularization, and one for the L2 regularization.
+Similarly, if you would like to have a model that is easy to interpret, Lasso will provide a model that is easier to understand, as it will select only a subset of the input features. scikit-learn also provides the `ElasticNet` class, which combines the penalties of Lasso and Ridge. In practice, this combination works best, though at the price of having two parameters to adjust: one for the L1 regularization, and one for the L2 regularization.
