@@ -168,3 +168,105 @@ yhat = X.dot(w)
 `l2 * np.eye(2)` generates a 2x2 matrix with `l2` in the diagonal. This is required to be a 2x2 matrix since `X.T.dot(X)` ($\mathbf{X}^T \mathbf{X}$) results in a 2x2 matrix as well.
 
 Generally, the identity matrix has to be $D \times D$ ($D$ being the number of features _including the bias_), since $X^TX$ results in a $D \times D$ matrix ($X^T$ being $D \times N$, $X$ being $N \times D$).
+
+## Gradient Descent
+
+Taking the cost function derivative, setting to 0 and solving for $w$ is in most cases difficult. For Linear Regression, it is simple, but for other machine learning models it is complex or resource intensive. _Gradient Descent_ is a method to estimate the parameters $w$ by minimizing the cost function $J(w)$ by iteratively updating $w$ in the direction of $\frac{\partial J(w)}{\partial w}$ in small steps.
+
+$w$ is set to a random initial value.
+
+The formula for _Gradient Descent_ is
+
+$$
+\begin{aligned}
+w \leftarrow w - {"learning rate"} \times \frac{\partial J(w)}{\partial w}
+\end{aligned}
+$$
+
+Repeat this over enough iterations.
+
+**Learning rate**: this is called a _hyperparameter_ since it is not part of the linear regression model, but only required to solve the gradient descent. Finding the right learning rate is one of the most difficult things in Machine Learning and requires practice.
+
+If the _learning rate_ is not set correctly, the iterative values of $w$ will oscillate between the sides of the cost function instead of descending towards the minimum.
+
+### Gradient Descent for Linear Regression
+
+The cost function for Linear Regression is:
+
+$$
+\begin{aligned}
+J(w) &= (Y - \hat{Y})^T(Y - \hat{Y})  \\
+&= (Y - Xw)^T(Y - Xw) \\
+\end{aligned}
+$$
+
+with $\hat{Y} = Xw$
+
+The _Gradient_ (or derivative) of this is:
+
+$$
+\begin{aligned}
+\frac{\partial J(w)}{\partial w} &= -2X^TY + 2X^TXw \\
+&= 2X^T(Xw - Y) \\
+&= 2X^T(\hat{Y} - Y)
+\end{aligned}
+$$
+
+Instead of setting this derivative to 0 and solving for $w$, we will just take small steps in this direction. We can also drop the factor $2$ since it is just a constant and can be absorbed into the learning rate.
+
+The algorithm for solving linear regression using gradient descent:
+
+-   set $w$ to a sample from $N(0, \frac{1}{D})$ (Gaussian normal distribution, centered at 0 and variance of 1/D with D the dimensionality of the data)
+-   loop for `t = 1..T:` `w = w - learningRate * X.T.dot(X.dot(w) - Y)`
+
+$$
+\begin{aligned}
+w = w - "learningRate" \times X^T(Xw - Y)
+\end{aligned}
+$$
+
+Why is $w$ coming from the Gaussian normal distribution like that?
+
+-   If you normalize your x to N(0, 1) (which is common),
+-   you would like your y to also be N(0, 1) (common in the sequels to this course),
+-   Then having w be N(0, 1/D) ensures that y is N(0, 1):
+-   var(y) = var(x1)var(w1) + var(x2)var(w2) + ... + var(xD)var(wD) = 1/D + 1/D + ... = 1
+
+You can do this in Python by:
+
+```python
+w = np.random.randn(D) / np.sqrt(D)
+```
+
+**Gradient Descent for Linear Regression - algorithm In Python:**
+
+Calculate the _mean squared error_ for each iteration and see that it decreases.
+
+```python
+# prep the data - read from DataFrame
+# add a column with bias to the left of X
+X = df[['x1', 'x2']].to_numpy()
+X = np.c_[np.ones(len(df['x1'])), X]
+Y = df['y'].to_numpy()
+
+rate = 0.0000031582
+N = 300000
+# initialize w (need 3 values, including 1 for the bias)
+w = np.random.randn(3)
+
+costs = []
+for i in range(N):
+    delta = X.dot(w) - Y
+    w = w - rate * X.T.dot(delta)
+    mse = delta.dot(delta) / len(X[:,0])
+    costs.append(mse)
+
+plt.plot(costs)
+plt.show()
+```
+
+With:
+
+-   X: N x D matrix of features (D includes a column of 1s for the bias)
+-   Y: N x 1 vector of targets
+-   w: D x 1 vector of parameters - assign random values from `np.random.randn(D)`
