@@ -113,7 +113,7 @@ SStot = tot.dot(tot)
 r_squared = 1 - (SSres / SStot)
 ```
 
-## Ridge Regression
+## Ridge Regression (L2 Regularization)
 
 A good overview of Ridge Regression (and Lasso Regression) can be found [here](https://www.analyticsvidhya.com/blog/2016/01/complete-tutorial-ridge-lasso-regression-python/).
 
@@ -127,19 +127,39 @@ Both Ridge and Lasso work by penalizing the magnitude of coefficients of feature
 
     Minimization objective = LS Obj + α \* (sum of square of coefficients)
 
+    L2 regularization uses the _L2 norm_ for the penalty term of the cost function.
+
+    L2 norm is the Euclidian distance:
+
+    $$
+    \begin{aligned}
+    \vert v \vert_2 &= \sqrt{v_1^2 + v_2^2 + v_3^2}
+    \end{aligned}
+    $$
+
 **Lasso Regression:**
 
 -   Performs **L1 regularization**, i.e. adds penalty equivalent to _absolute value of the magnitude_ of coefficients
 
     Minimization objective = LS Obj + α \* (sum of absolute value of coefficients)
 
+    L1 regularization uses the _L1 norm_ for the penalty term of the cost function.
+
+    L1 norm is the Manhattan or Taxi distance:
+
+    $$
+    \begin{aligned}
+    \vert v \vert_1 &= \vert v_1 \vert + \vert v_2 \vert + \vert v_3 \vert
+    \end{aligned}
+    $$
+
 Note that here ‘LS Obj’ refers to ‘least squares objective’, i.e. the linear regression objective without regularization.
 
-Cost function:
+**L2 regularization cost function:**
 
 $$
 \begin{aligned}
-J &= \sum_{n=1}^N (y_n - \hat{y}_n)^2 + \lambda \vert{\vec{w}}\vert^2
+J &= \sum_{n=1}^N (y_n - \hat{y}_n)^2 + \lambda \vert{\vec{w}}\vert_2^2
 \end{aligned}
 $$
 
@@ -270,3 +290,40 @@ With:
 -   X: N x D matrix of features (D includes a column of 1s for the bias)
 -   Y: N x 1 vector of targets
 -   w: D x 1 vector of parameters - assign random values from `np.random.randn(D)`
+
+## Lasso Regression (L1 Regularization)
+
+In general, we prefer a "skinny" matrix of X - so that D << N (# features << # samples) vs. a "fat" matrix where the number of features is equal to or more than the number of samples.
+
+This is called _sparcity_ - a small number of important features predict the target. Most weights are zero, only a few weights are non-zero.
+
+This is achieved through **L1 regularization**.
+
+**L1 regularization cost function:**
+
+$$
+\begin{aligned}
+J_{Lasso} &= \sum_{n=1}^N (y_n - \hat{y}_n)^2 + \lambda \vert w \vert_1 \\
+\end{aligned}
+$$
+
+The derivative of the cost function is:
+
+$$
+\begin{aligned}
+J &= (Y - Xw)^T (Y - Xw) + \lambda \vert w \vert \\
+&= Y^T Y - 2 Y^T Xw + w^T X^T Xw + \lambda \vert w \vert \\
+
+\frac{\partial J}{\partial w} &= -2 X^T Y + 2 X^T Xw + \lambda sign(w)
+\end{aligned}
+$$
+
+The $sign(w)$ function can't be solved for $w$ as it is not reversible.
+
+Hence, _Gradient Descent_ has to be used to determine $w$ for L1 regularization. Gradient descent algorithm:
+
+$$
+\begin{aligned}
+w \leftarrow w - learningRate \times (X^T(Xw - Y) + \lambda \times sign(w))
+\end{aligned}
+$$
