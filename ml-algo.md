@@ -1,7 +1,7 @@
 ---
 title: Machine Learning Algorithms - the math!
 author: Björn Winkler
-date: 3-Aug-2019
+date: 10-Aug-2019
 ---
 
 ### Note:
@@ -113,82 +113,6 @@ SStot = tot.dot(tot)
 r_squared = 1 - (SSres / SStot)
 ```
 
-## Ridge Regression (L2 Regularization)
-
-A good overview of Ridge Regression (and Lasso Regression) can be found [here](https://www.analyticsvidhya.com/blog/2016/01/complete-tutorial-ridge-lasso-regression-python/).
-
-**Ridge Regression** adds _regularization_ to normal linear regression by penalizing large weights by adding their squared magnitude to the cost.
-
-Both Ridge and Lasso work by penalizing the magnitude of coefficients of features along with minimizing the error between predicted and actual observations. These are called ‘regularization’ techniques. The key difference is in how they assign penalty to the coefficients:
-
-**Ridge Regression:**
-
--   Performs **L2 regularization**, i.e. adds penalty equivalent to _square of the magnitude_ of coefficients
-
-    Minimization objective = LS Obj + α \* (sum of square of coefficients)
-
-    L2 regularization uses the _L2 norm_ for the penalty term of the cost function.
-
-    L2 norm is the Euclidian distance:
-
-    $$
-    \begin{aligned}
-    \vert v \vert_2 &= \sqrt{v_1^2 + v_2^2 + v_3^2}
-    \end{aligned}
-    $$
-
-**Lasso Regression:**
-
--   Performs **L1 regularization**, i.e. adds penalty equivalent to _absolute value of the magnitude_ of coefficients
-
-    Minimization objective = LS Obj + α \* (sum of absolute value of coefficients)
-
-    L1 regularization uses the _L1 norm_ for the penalty term of the cost function.
-
-    L1 norm is the Manhattan or Taxi distance:
-
-    $$
-    \begin{aligned}
-    \vert v \vert_1 &= \vert v_1 \vert + \vert v_2 \vert + \vert v_3 \vert
-    \end{aligned}
-    $$
-
-Note that here ‘LS Obj’ refers to ‘least squares objective’, i.e. the linear regression objective without regularization.
-
-**L2 regularization cost function:**
-
-$$
-\begin{aligned}
-J &= \sum_{n=1}^N (y_n - \hat{y}_n)^2 + \lambda \vert{\vec{w}}\vert_2^2
-\end{aligned}
-$$
-
-where $\vert \vec{w} \vert$ is the magnitude of the paramater (coefficient) vector $w$, and $\lambda$ is a factor that determines the restriction of the coefficients. Increasing $\lambda$ forces coefficients towards zero, which decreases training set performance but might help generalization. For very small values of $\lambda$, RidgeRegression is similar to LinearRegression.
-
-By solving for the minimum of the derivative of $J$, $w$ can be calculated as:
-
-$$
-\begin{aligned}
-\vec{w} &= (\lambda \mathbf{I} + \mathbf{X}^T \mathbf{X})^{-1} \mathbf{X}^T \vec{y} \\
-\hat{y} &= \mathbf{X}^T \vec{w}
-\end{aligned}
-$$
-
-In Python:
-
-```python
-# lambda or alpha...
-l2 = 1000.0
-w = np.linalg.solve(l2 * np.eye(2) + X.T.dot(X), X.T.dot(Y))
-
-# calculate yhat just like normal linear regression
-yhat = X.dot(w)
-```
-
-`l2 * np.eye(2)` generates a 2x2 matrix with `l2` in the diagonal. This is required to be a 2x2 matrix since `X.T.dot(X)` ($\mathbf{X}^T \mathbf{X}$) results in a 2x2 matrix as well.
-
-Generally, the identity matrix has to be $D \times D$ ($D$ being the number of features _including the bias_), since $X^TX$ results in a $D \times D$ matrix ($X^T$ being $D \times N$, $X$ being $N \times D$).
-
 ## Gradient Descent
 
 Taking the cost function derivative, setting to 0 and solving for $w$ is in most cases difficult. For Linear Regression, it is simple, but for other machine learning models it is complex or resource intensive. _Gradient Descent_ is a method to estimate the parameters $w$ by minimizing the cost function $J(w)$ by iteratively updating $w$ in the direction of $\frac{\partial J(w)}{\partial w}$ in small steps.
@@ -269,13 +193,14 @@ X = df[['x1', 'x2']].to_numpy()
 X = np.c_[np.ones(len(df['x1'])), X]
 Y = df['y'].to_numpy()
 
-rate = 0.0000031582
-N = 300000
+rate = 0.0000031582     # learning rate
+T = 300000              # number of epochs
+
 # initialize w (need 3 values, including 1 for the bias)
-w = np.random.randn(3)
+w = np.random.randn(3) / np.sqrt(3)
 
 costs = []
-for i in range(N):
+for i in range(T):
     delta = X.dot(w) - Y
     w = w - rate * X.T.dot(delta)
     mse = delta.dot(delta) / len(X[:,0])
@@ -291,6 +216,137 @@ With:
 -   Y: N x 1 vector of targets
 -   w: D x 1 vector of parameters - assign random values from `np.random.randn(D)`
 
+## Regularization
+
+A good overview of **regularization techniques** like Ridge Regression and Lasso Regression can be found [here](https://www.analyticsvidhya.com/blog/2016/01/complete-tutorial-ridge-lasso-regression-python/).
+
+**Ridge Regression** adds _regularization_ to normal linear regression by penalizing large weights by adding their squared magnitude to the cost.
+
+Both Ridge and Lasso work by penalizing the magnitude of coefficients of features along with minimizing the error between predicted and actual observations. These are called ‘regularization’ techniques. The key difference is in how they assign penalty to the coefficients:
+
+**Ridge Regression:**
+
+-   Performs **L2 regularization**, i.e. adds penalty equivalent to _square of the magnitude_ of coefficients
+
+    Minimization objective = LS Obj + α \* (sum of square of coefficients)
+
+    L2 regularization uses the _L2 norm_ for the penalty term of the cost function.
+
+    L2 norm is the Euclidian distance:
+
+    $$
+    \begin{aligned}
+    \vert v \vert_2 &= \sqrt{v_1^2 + v_2^2 + v_3^2}
+    \end{aligned}
+    $$
+
+**Lasso Regression:**
+
+-   Performs **L1 regularization**, i.e. adds penalty equivalent to _absolute value of the magnitude_ of coefficients
+
+    Minimization objective = LS Obj + α \* (sum of absolute value of coefficients)
+
+    L1 regularization uses the _L1 norm_ for the penalty term of the cost function.
+
+    L1 norm is the Manhattan or Taxi distance:
+
+    $$
+    \begin{aligned}
+    \vert v \vert_1 &= \vert v_1 \vert + \vert v_2 \vert + \vert v_3 \vert
+    \end{aligned}
+    $$
+
+Note that here ‘LS Obj’ refers to ‘least squares objective’, i.e. the linear regression objective without regularization.
+
+## Ridge Regression (L2 Regularization)
+
+**L2 regularization cost function:**
+
+$$
+\begin{aligned}
+J &= \sum_{n=1}^N (y_n - \hat{y}_n)^2 + \lambda \vert{\vec{w}}\vert_2^2
+\end{aligned}
+$$
+
+where $\vert \vec{w} \vert$ is the magnitude of the paramater (coefficient) vector $w$, and $\lambda$ is a factor that determines the restriction of the coefficients. Increasing $\lambda$ forces coefficients towards zero, which decreases training set performance but might help generalization. For very small values of $\lambda$, RidgeRegression is similar to LinearRegression.
+
+By solving for the minimum of the derivative of $J$, $w$ can be calculated as:
+
+$$
+\begin{aligned}
+\vec{w} &= (\lambda \mathbf{I} + \mathbf{X}^T \mathbf{X})^{-1} \mathbf{X}^T \vec{y} \\
+\hat{y} &= \mathbf{X}^T \vec{w}
+\end{aligned}
+$$
+
+In Python:
+
+```python
+# lambda or alpha...
+l2 = 1000.0
+w = np.linalg.solve(l2 * np.eye(2) + X.T.dot(X), X.T.dot(Y))
+
+# calculate yhat just like normal linear regression
+yhat = X.dot(w)
+```
+
+`l2 * np.eye(2)` generates a 2x2 matrix with `l2` in the diagonal. This is required to be a 2x2 matrix since `X.T.dot(X)` ($\mathbf{X}^T \mathbf{X}$) results in a 2x2 matrix as well.
+
+Generally, the identity matrix has to be $D \times D$ ($D$ being the number of features _including the bias_), since $X^TX$ results in a $D \times D$ matrix ($X^T$ being $D \times N$, $X$ being $N \times D$).
+
+### L2 Regularization using Gradient Descent
+
+**L2 regularization cost function:**
+
+$$
+\begin{aligned}
+J_{Ridge} &= \sum_{n=1}^N (y_n - \hat{y}_n)^2 + \lambda \vert{\vec{w}}\vert_2^2 \\
+&= (Y - Xw)^T (Y - Xw) + \lambda w^Tw \\
+&= Y^T Y - Y^T X w - w^T X^T Y - w^T X^T X w + \lambda w^T w \\
+&= Y^T Y - 2 Y^T X w - w^T X^T X w + \lambda w^T w
+\end{aligned}
+$$
+
+The derivative of the cost function is:
+
+$$
+\begin{aligned}
+\frac{\partial J}{\partial w} &= -2X^T (Y - Xw) + 2 \lambda w \\
+&= X^T (Xw - Y) + \lambda w
+\end{aligned}
+$$
+
+The factors $2$ can be dropped as they will be absorbed into the learning rate.
+
+Gradient descent algorithm:
+
+$$
+\begin{aligned}
+w \leftarrow w - learningRate \times (X^T(Xw - Y) + \lambda w)
+\end{aligned}
+$$
+
+In Python:
+
+```python
+N = len(X[:, 1])    # number of samples
+D = X.shape[1]      # number of features (incl the bias column)
+T = 10000           # number of epochs
+rate = 0.00003      # learning rate
+alpha = 10          # regularization parameter
+
+# set w to random starting parameters
+w = np.random.randn(D) / np.sqrt(D)
+
+costs = []
+
+for t in range(T):
+    delta = X.dot(w) - Y
+    w = w - rate * (X.T.dot(delta) + alpha * w)
+    mse = delta.dot(delta) / N
+    costs.append(mse)
+```
+
 ## Lasso Regression (L1 Regularization)
 
 In general, we prefer a "skinny" matrix of X - so that D << N (# features << # samples) vs. a "fat" matrix where the number of features is equal to or more than the number of samples.
@@ -304,6 +360,8 @@ This is achieved through **L1 regularization**.
 $$
 \begin{aligned}
 J_{Lasso} &= \sum_{n=1}^N (y_n - \hat{y}_n)^2 + \lambda \vert w \vert_1 \\
+&= (Y - Xw)^T (Y - Xw) + \lambda \vert w \vert \\
+&= Y^T Y - 2 Y^T Xw + w^T X^T Xw + \lambda \vert w \vert \\
 \end{aligned}
 $$
 
@@ -311,19 +369,44 @@ The derivative of the cost function is:
 
 $$
 \begin{aligned}
-J &= (Y - Xw)^T (Y - Xw) + \lambda \vert w \vert \\
-&= Y^T Y - 2 Y^T Xw + w^T X^T Xw + \lambda \vert w \vert \\
-
-\frac{\partial J}{\partial w} &= -2 X^T Y + 2 X^T Xw + \lambda sign(w)
+\frac{\partial J}{\partial w} &= -2 X^T Y + 2 X^T Xw + \lambda sign(w) \\
+&= X^T (X w - Y) + \lambda sign(w)
 \end{aligned}
 $$
 
 The $sign(w)$ function can't be solved for $w$ as it is not reversible.
 
-Hence, _Gradient Descent_ has to be used to determine $w$ for L1 regularization. Gradient descent algorithm:
+Hence, **_Gradient Descent_ has to be used to determine $w$ for L1 regularization.**
+
+Gradient descent algorithm:
 
 $$
 \begin{aligned}
 w \leftarrow w - learningRate \times (X^T(Xw - Y) + \lambda \times sign(w))
 \end{aligned}
 $$
+
+In Python:
+
+```python
+N = len(X[:, 1])    # number of samples
+D = X.shape[1]      # number of features (incl the bias column)
+T = 10000           # number of epochs
+rate = 0.00003      # learning rate
+alpha = 10          # regularization parameter
+
+# set w to random starting parameters
+w = np.random.randn(D) / np.sqrt(D)
+
+costs = []
+
+for t in range(T):
+    delta = X.dot(w) - Y
+    w = w - rate * (X.T.dot(delta) + alpha * np.sign(w))
+    mse = delta.dot(delta) / N
+    costs.append(mse)
+
+
+plt.plot(costs)
+plt.show()
+```
