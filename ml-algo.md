@@ -410,3 +410,59 @@ for t in range(T):
 plt.plot(costs)
 plt.show()
 ```
+
+# Logistic Regression
+
+## The Logistic Regression model
+
+Logistic regression makes the assumption that the _data can be separated by a **line or plane**_, i.e. by a linear function.
+
+This is achieved by using a **sigmoid function**. This can be either in the form of the hyperbolic tangent function $\tanh(x) \isin (-1, 1), y_{intercept} = 0$. We use the following sigmoid function:
+
+$$
+\begin{aligned}
+\sigma(z) &= \frac{1}{1 + e^{(-z)}} \isin (0, 1), y_{intercept} = 0.5 \\
+\text{with}\nobreakspace z &= w^T X
+\end{aligned}
+$$
+
+This creates a function that's $0$ for large negative values of $z$, $1$ for large positive values of $z$ and $0.5$ for $z = 0$.
+
+Hence this can be used easily as a linear classifier:
+
+$$
+\begin{aligned}
+\sigma(w^T X) &> 0.5 \rightarrow 1 \\
+\sigma(w^T X) &< 0.5 \rightarrow 0 \\
+\end{aligned}
+$$
+
+**Predictions** can be made by
+
+$$
+\begin{aligned}
+\hat{y} = \sigma(w^T X)
+\end{aligned}
+$$
+
+In Python:
+
+```python
+def sigmoid(a):
+    return 1 / (1 + np.exp(-a))
+
+def forward(X, w, b):
+    return sigmoid(X.dot(w) + b)
+
+# probability of Y given X, using our sigmoid function and random weights
+P_Y_given_X = forward(X, w, b)
+
+# make predictions (binary) by rounding
+predictions = np.round(P_Y_given_X)
+
+# compare the results
+def classification_rate(Y, P):
+    return np.mean(Y == P)
+
+print('Classification rate: {}'.format(classification_rate(Y, predictions)))
+```
