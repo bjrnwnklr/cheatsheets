@@ -193,6 +193,66 @@ Clean up is typically
 - converting to lower case
 - removing punctuation
 
+## My preferred Clean Up / Lemmatize function
+
+This uses `ToktokTokenizer` to tokenize and `WordNetLemmatizer` to lemmatize. It also does:
+
+- Lower case 
+- remove punctuation
+- remove digits / numbers
+- remove stopwords
+
+```python
+import string
+import re
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+from nltk.tokenize.toktok import ToktokTokenizer
+
+def wordnet_tokenize(text):
+    lem = WordNetLemmatizer()
+    tokenizer = ToktokTokenizer()
+        
+    text = [
+        lem.lemmatize(token)
+        for token in tokenizer.tokenize(text)
+    ]
+            
+    return text
+
+def clean_up(text, lower=True, remove_punct=True, remove_numbers=True, remove_stopwords=True):
+    # default - lower case
+    if lower:
+        text = text.lower()
+    
+    # default - remove punctuation 
+    if remove_punct:
+        punct_re = re.compile('[' + re.escape(string.punctuation) + '\\r\\t\\n]')
+        text = punct_re.sub(' ', str(text))
+
+    # default - remove numbers
+    if remove_numbers:
+        numbers_re = re.compile(r'[\d]')
+        text = numbers_re.sub(' ', text)
+        
+    # lemmatize using WordNetLemmatizer (should try Spacy as well)
+    text = wordnet_tokenize(text)
+    
+    # default - remove stopwords
+    if remove_stopwords:
+        text = [word for word in text if word not in stopwords.words('english')]
+    
+    return ' '.join(text)
+```
+
+Apply this to a `pd.DataFrame` using `map`. Then convert into a list of tokens to process further.
+
+```python
+reviews_df['comb_text'] = reviews_df['comb_text'].map(clean_up)
+
+tokens = [w for doc in reviews_df['comb_text'] for w in doc.split(' ')]
+```
+
 ## Manual clean up
 
 ```python
@@ -230,6 +290,7 @@ def pre_process(text):
     return text
 ```
 
+
 ## Using Tokenizer, Stemmer and Lemmatizer to clean up
 
 Good example [here](https://towardsdatascience.com/a-practitioners-guide-to-natural-language-processing-part-i-processing-understanding-text-9f4abfd13e72) and in the [O'Reilly - Applied Text Analysis with Python book](https://learning.oreilly.com/library/view/applied-text-analysis/9781491963036/ch04.html#ATAP04)
@@ -238,7 +299,7 @@ Good example [here](https://towardsdatascience.com/a-practitioners-guide-to-natu
 
 You can use:
 - `nltk.word_tokenize(text)` - this splits by whitespace and other symbols like quotes (e.g. splits "don't" into "do" and "n't" - so not really useful)
-- `nltk.tokenizer.toktok.ToktokTokenizer.tokenize(text)` - this seems to preserve contractions e.g. "don't"
+- `nltk.tokenize.toktok.ToktokTokenizer.tokenize(text)` - this seems to preserve contractions e.g. "don't"
 
 Example:
 
@@ -249,7 +310,7 @@ word = word_tokenize(word)
 ```
 
 ```python
-from nltk.tokenizer.toktok import ToktokTokenizer
+from nltk.tokenize.toktok import ToktokTokenizer
 
 tokenizer = ToktokTokenizer()
 word = tokenizer.tokenize(word)
@@ -439,4 +500,133 @@ first_doc = test_idf[1]
 # - need to use `T` to create a Series as toarray would create a column for each word
 key_words = pd.DataFrame(first_doc.T.toarray(), index=feature_names)
 key_words.sort_values(by=0, ascending=False)[:15]
+```
+
+# Collocations
+
+## Creating _ngrams_
+
+Using _Pointwise Mutual Information_ (PMI), create bigrams/trigrams - this identifies terms that really belong together e.g. "Amazon Prime".
+
+PMI finds pairs of words that appear often together and seldomly alone.
+
+20 is a good starting point for the filter frequency.
+
+```python
+import pandas as pd
+from nltk.collocations import *
+from nltk.metrics import BigramAssocMeasures, TrigramAssocMeasures
+
+def get_bigramPMITable(tokens, filter_freq=0):
+    """
+    Find bigrams using the PMI (Pointwise Mutual Information) score. Returns a Pandas DataFrame sorted by PMI score.
+    
+    :param tokens: A list of tokenized text.
+    :param filter_freq: Filter out any bigrams that occur less than the filter frequency (default = 0)
+    
+    :returns: Pandas DataFrame with columns 'bigram' and 'PMI', sorted descending by PMI score.
+    """
+    bigrams = BigramAssocMeasures()
+    bigramFinder = BigramCollocationFinder.from_words(tokens)
+    bigramFinder.apply_freq_filter(filter_freq)
+    bigramPMITable = pd.DataFrame(list(bigramFinder.score_ngrams(bigrams.pmi)), columns=['bigram', 'PMI']).sort_values(by='PMI', ascending=False)
+
+    return bigramPMITable
+
+def get_trigramPMITable(tokens, filter_freq=0):
+    """
+    Find trigrams using the PMI (Pointwise Mutual Information) score. Returns a Pandas DataFrame sorted by PMI score.
+    
+    :param tokens: A list of tokenized text.
+    :param filter_freq: Filter out any trigrams that occur less than the filter frequency (default = 0)
+    
+    :returns: Pandas DataFrame with columns 'trigram' and 'PMI', sorted descending by PMI score.
+    """
+    trigrams = TrigramAssocMeasures()
+    trigramFinder = TrigramCollocationFinder.from_words(tokens)
+    trigramFinder.apply_freq_filter(filter_freq)
+    trigramPMITable = pd.DataFrame(list(trigramFinder.score_ngrams(trigrams.pmi)), columns=['trigram', 'PMI']).sort_values(by='PMI', ascending=False)
+    
+    return trigramPMITable
+```
+
+## Collocations / bigram associations
+
+Bigram associations - which words appear frequently together? These give a context for words, e.g. "performance" and "slow", "poor" etc.
+
+```python
+import collections
+from nltk.collocations import *
+from nltk.metrics import BigramAssocMeasures, TrigramAssocMeasures
+
+def get_bigramCollocations(tokens):
+    """
+    Create a dictionary of tokens, with a list of words that appear frequently in bigrams with the token.
+    
+    :param tokens: A list of tokenized text.
+    
+    :returns: A dictionary with token:list pairs. The list has pair words from bigrams for the token and their likelihood ratio.
+                The list is sorted descending by likelihood ratio.
+    """
+    bigrams = BigramAssocMeasures()
+    bigramFinder = BigramCollocationFinder.from_words(tokens)
+    scored = bigramFinder.score_ngrams(bigrams.likelihood_ratio)
+    
+    prefix_keys = collections.defaultdict(list)
+    for key, scores in scored:
+        prefix_keys[key[0]].append((key[1], scores))
+        prefix_keys[key[1]].append((key[0], scores))
+        
+    # sort each dictionary entry (list of associated words) by frequency
+    for key in prefix_keys:
+        prefix_keys[key].sort(key=lambda x: -x[1])
+
+    return prefix_keys
+
+p_keys = get_bigramCollocations(tokens)
+p_keys['kindle'][:10]
+```
+
+## Concordance
+
+Show text surrounding words. This requires the text to be raw, i.e. not have stopwords removed.
+
+Text should however be lower cased and tokenized. `ToktokTokenizer` does a good job for this.
+
+```python
+from nltk.tokenize.toktok import ToktokTokenizer
+from nltk import Text
+
+def get_full_text_tokens(text):
+    tokenizer = ToktokTokenizer()
+    text = text.lower()
+    text = tokenizer.tokenize(text)
+    return text
+
+reviews_df['token_reviews'] = reviews_df['reviews.text'].map(get_full_text_tokens)
+raw_tokens = [w for doc in reviews_df['token_reviews'] for w in doc]
+text = Text(raw_tokens)
+
+text.concordance('good', width=50, lines=10)
+```
+
+# Generating a word cloud
+
+Two ways of creating word clouds:
+
+1. using term frequency dictionary as explained in [here](#using-countvectorizer-to-create-a-term-frequency-matrix)
+1. using raw text and let WordCloud do the counting / collocation etc
+
+```python
+from wordcloud import WordCloud
+
+def get_wc(term_dict):
+    wc = WordCloud(background_color='white').fit_words(term_dict)
+    plt.figure(figsize=(10, 5))
+    plt.imshow(wc)
+    
+def get_wc_text(tokens):
+    wc = WordCloud(background_color='white').generate(tokens)
+    plt.figure(figsize=(10, 5))
+    plt.imshow(wc)
 ```
