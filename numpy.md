@@ -80,6 +80,13 @@ array([[ 0,  1,  2,  3],
        [28, 29, 30, 31]])
 ```
 
+`ravel()` flattens an array into a 1D vector
+
+```python
+np.ravel([[0, 1], [2, 3]])
+array([0, 1, 2, 3])
+```
+
 # Converting Pandas DataFrame into Numpy arrays
 
 Since Pandas v24.0, the preferred way to convert a Pandas DataFrame into a Numpy array is via `df.to_numpy()`.
