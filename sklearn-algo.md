@@ -8,8 +8,11 @@ date: 7-July-2019
 
 My summary cheatsheet of machine learning algorithms in `scikit-learn`.
 
+# Plotting
 
-# Plotting a linear regression / dataset
+Some handy ways to plot data, e.g. for classification or regression data.
+
+## Plotting a linear regression / dataset
 
 This will come in handy to plot data, e.g. from the ISLR (Introduction to Statistical Learning) book:
 
@@ -50,6 +53,66 @@ for ax, feature in zip(axes, adv_feature_names):
     # set axis labels
     ax.set_ylabel('Sales')
     ax.set_xlabel(feature)
+```
+
+## Plotting a decision boundary
+
+```python
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.datasets import make_moons, make_circles, make_classification
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+
+
+# define some random data and apply a scaler
+X, y = make_classification(n_features=2, n_redundant=0, n_informative=2, random_state=3)
+X = StandardScaler().fit_transform(X)
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=1)
+
+cm = plt.cm.coolwarm
+
+# plot the training data as solid, the test data as light dots
+plt.scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap=cm)
+plt.scatter(X_test[:, 0], X_test[:, 1], c=y_test, cmap=cm, alpha=0.6)
+
+# plot the decision boundary for KNeighbors, with neighbors from 1-10
+n = 10
+# stepsize in mesh
+h = 0.2
+
+fig, axes = plt.subplots(10, 1, figsize=(4, 40))
+
+for i, ax in zip(range(1, n+1), axes):
+    # define the classifier
+    clf = KNeighborsClassifier(n_neighbors=i)
+    clf.fit(X_train, y_train)
+    score = clf.score(X_test, y_test)
+
+    # create a meshgrid of 2D coordinates
+    x_min, x_max = X[:, 0].min() - 0.5, X[:, 0].max() + 0.5
+    y_min, y_max = X[:, 1].min() - 0.5, X[:, 1].max() + 0.5
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
+
+    # ravel() flattens a multi dimensional array into 1D
+    # np.c_ appends the two 1D arrays into a matrix with 2 columns
+    # [:, 1] takes the 2nd column from the result, representing the probability of being in class 1 
+    # (first column is the probability of being in class 0), which would swap the colors
+    #
+    # Some classification models have a predict_proba function, some others use 'decision_function'
+    Z = clf.predict_proba(np.c_[xx.ravel(), yy.ravel()])[:, 1]
+
+    # reshape Z to the same shape as xx
+    Z = Z.reshape(xx.shape)
+
+    # plot the results
+    ax.contourf(xx, yy, Z, cmap=cm, alpha=.7)
+    ax.scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap=cm, edgecolors='k')
+    ax.scatter(X_test[:, 0], X_test[:, 1], c=y_test, cmap=cm, edgecolors='k', alpha=0.6)
+    ax.text(x_max - 0.3, y_min + 0.3, score, horizontalalignment='right', size=15)
+    ax.set_title('{} neighbors'.format(i))
 ```
 
 # Classification algorithms
