@@ -8,6 +8,30 @@ Useful tricks for Kaggle competitions.
 
 Using the [Titanic challenge](https://www.kaggle.com/c/titanic) as an example.
 
+
+# General approach
+
+Good tutorial to feature engineering, filling in missing data and interpreting data is found in this [82% Kaggle tutorial](https://www.kaggle.com/gunesevitan/advanced-feature-engineering-tutorial-with-titanic)
+
+1. Find missing values
+2. Decide how to fill missing values
+   1. Inspect the data - which samples are missing data (for very few, maybe the data offers a hint)
+   2. Use mean/median/mode - depending on type of data
+   3. Decide if grouping data together by existing features (e.g. Pclass / Title / Sex) will give better estimates for missing values
+   4. Google / research to find out if that can help filling missing data (e.g. based on historic values)
+3. Inspect distribution, correlation against targets    
+   1. Using `sns.distplot` for continuous features and `sns.countplot` for categorical (discrete) features
+   2. If split points and spikes are very visible in the continuous features, they can be captured easily with a decision tree algorithm, but neural networks may not be able to spot them.
+   3. If categorical features have very distinct classes with different survival rates, those classes can be used as new features with one-hot encoding. Some of those classes also may be combined with each other to make new features.
+4. Feature engineering
+   1. Bin continuous features, using `pd.qcut` (creates bins of equal size)
+   2. Label encode non-numerical features using `LabelEncoder`. 
+   3. One hot encoding categorical features using `OneHotEncoder` of `pd.get_dummies`
+5. Drop any columns that are not required
+6. Scale the columns using `StandardScaler`
+7. Run through a model, using cross validation
+8. Compare feature importance
+
 # Describing the dataset
 
 ```python
@@ -62,6 +86,16 @@ Using a crosstab to show # of passengers by title, split by gender:
 pd.crosstab(train_df['Title'], train_df['Sex'])
 ```
 
+## Correlation
+
+Creating correlation between Age and other features. This can give good hints on what to use to fill missing data values for Age (if they have a high correlation).
+
+```python
+df_all_corr = df_all.corr().unstack().sort_values(kind="quicksort", ascending=False).reset_index()
+df_all_corr.rename(columns={"level_0": "Feature 1", "level_1": "Feature 2", 0: 'Correlation Coefficient'}, inplace=True)
+df_all_corr[df_all_corr['Feature 1'] == 'Age']
+```
+
 ## Plots
 
 ### FacetGrid
@@ -99,7 +133,107 @@ ax.scatter(data[data['Survived'] == 0]['Age'], data[data['Survived'] == 0]['Fare
            c='red', s=data[data['Survived'] == 0]['Fare']);
 ```
 
+### Continuous data - `sns.distplot`
+
+```python
+cont_features = ['Age', 'Fare']
+surv = df_train['Survived'] == 1
+
+fig, axs = plt.subplots(ncols=2, nrows=2, figsize=(20, 20))
+plt.subplots_adjust(right=1.5)
+
+for i, feature in enumerate(cont_features):    
+    # Distribution of survival in feature
+    sns.distplot(df_train[~surv][feature], label='Not Survived', hist=True, color='#e74c3c', ax=axs[0][i])
+    sns.distplot(df_train[surv][feature], label='Survived', hist=True, color='#2ecc71', ax=axs[0][i])
+    
+    # Distribution of feature in dataset
+    sns.distplot(df_train[feature], label='Training Set', hist=False, color='#e74c3c', ax=axs[1][i])
+    sns.distplot(df_test[feature], label='Test Set', hist=False, color='#2ecc71', ax=axs[1][i])
+    
+    axs[0][i].set_xlabel('')
+    axs[1][i].set_xlabel('')
+    
+    for j in range(2):        
+        axs[i][j].tick_params(axis='x', labelsize=20)
+        axs[i][j].tick_params(axis='y', labelsize=20)
+    
+    axs[0][i].legend(loc='upper right', prop={'size': 20})
+    axs[1][i].legend(loc='upper right', prop={'size': 20})
+    axs[0][i].set_title('Distribution of Survival in {}'.format(feature), size=20, y=1.05)
+
+axs[1][0].set_title('Distribution of {} Feature'.format('Age'), size=20, y=1.05)
+axs[1][1].set_title('Distribution of {} Feature'.format('Fare'), size=20, y=1.05)
+        
+plt.show()
+```
+
+### Categorical data - `sns.countplot`
+
+```python
+cat_features = ['Embarked', 'Parch', 'Pclass', 'Sex', 'SibSp', 'Deck']
+
+fig, axs = plt.subplots(ncols=2, nrows=3, figsize=(20, 20))
+plt.subplots_adjust(right=1.5, top=1.25)
+
+for i, feature in enumerate(cat_features, 1):    
+    plt.subplot(2, 3, i)
+    sns.countplot(x=feature, hue='Survived', data=df_train)
+    
+    plt.xlabel('{}'.format(feature), size=20, labelpad=15)
+    plt.ylabel('Passenger Count', size=20, labelpad=15)    
+    plt.tick_params(axis='x', labelsize=20)
+    plt.tick_params(axis='y', labelsize=20)
+    
+    plt.legend(['Not Survived', 'Survived'], loc='upper center', prop={'size': 18})
+    plt.title('Count of Survival in {} Feature'.format(feature), size=20, y=1.05)
+
+plt.show()
+```
+
+### Barplot to show distribution across categories
+
+```python
+sns.barplot(x=df_all['Family_Size'].value_counts().index, y=df_all['Family_Size'].value_counts().values, ax=axs[0][0])
+```
+
+### Correlation heatmap
+
+Showing correlation heatmaps between features for training and test sets:
+
+```python
+fig, axs = plt.subplots(nrows=2, figsize=(20, 20))
+
+sns.heatmap(df_train.drop(['PassengerId'], axis=1).corr(), ax=axs[0], annot=True, square=True, cmap='coolwarm', annot_kws={'size': 14})
+sns.heatmap(df_test.drop(['PassengerId'], axis=1).corr(), ax=axs[1], annot=True, square=True, cmap='coolwarm', annot_kws={'size': 14})
+
+for i in range(2):    
+    axs[i].tick_params(axis='x', labelsize=14)
+    axs[i].tick_params(axis='y', labelsize=14)
+    
+axs[0].set_title('Training Set Correlations', size=15)
+axs[1].set_title('Test Set Correlations', size=15)
+
+plt.show()
+```
+
 # Wrangling data
+
+## Filling missing data
+
+Using Pclass and Sex to fill missing Age values with the `median` value for Sex/Pclass combinations (could also use Title/Pclass combination):
+
+```python
+age_by_pclass_sex = df_all.groupby(['Sex', 'Pclass']).median()['Age']
+
+for pclass in range(1, 4):
+    for sex in ['female', 'male']:
+        print('Median age of Pclass {} {}s: {}'.format(pclass, sex, age_by_pclass_sex[sex][pclass]))
+print('Median age of all passengers: {}'.format(df_all['Age'].median()))
+
+# Filling the missing values in Age with the medians of Sex and Pclass groups
+df_all['Age'] = df_all.groupby(['Sex', 'Pclass'])['Age'].apply(lambda x: x.fillna(x.median()))
+```
 
 ## Categorizing data into bins
 
@@ -109,6 +243,15 @@ ax.scatter(data[data['Survived'] == 0]['Age'], data[data['Survived'] == 0]['Fare
 bins = [0, 5, 12, 19, 35, 60, 100]
 labels = ['young', 'child', 'teenager', 'young_adult', 'adult', 'senior']
 df_train_raw['Age_group'] = pd.cut(df_train_raw['Age'], bins=bins, labels=labels)
+```
+
+### Using `pd.qcut` to create equal sized bins
+
+```python
+df_all['Fare'] = pd.qcut(df_all['Fare'], 13)
+
+fig, axs = plt.subplots(figsize=(22, 9))
+sns.countplot(x='Fare', hue='Survived', data=df_all)
 ```
 
 ### Adding a new column with summarized titles
@@ -139,6 +282,18 @@ Converting male/female into 0 / 1
 df_temp['Sex'] = df_temp['Sex'].map({'male': 0, 'female': 1})
 ```
 
+### Using `LabelEncoder` to convert non-numerical features into numerical
+
+Non-numerical features are converted to numerical type with `LabelEncoder`. LabelEncoder basically labels the classes from 0 to n. This process is necessary for Machine Learning algorithms to learn from those features.
+
+```python
+non_numeric_features = ['Embarked', 'Sex', 'Deck', 'Title', 'Family_Size_Grouped', 'Age', 'Fare']
+
+for df in dfs:
+    for feature in non_numeric_features:        
+        df[feature] = LabelEncoder().fit_transform(df[feature])
+```
+
 ## One hot encoding
 
 One hot encoding categorical data, e.g. Pclass
@@ -161,6 +316,14 @@ def get_title(df):
 
 title = get_title(df_all)
 df_all = pd.concat([df_all, title], axis=1)
+```
+
+# Scaling data
+
+## Using `StandardScaler` to scale data
+
+```python
+X_train = StandardScaler().fit_transform(df_train.drop(columns=drop_cols))
 ```
 
 # Cross validating across models
