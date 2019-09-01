@@ -13,6 +13,8 @@ Using the [Titanic challenge](https://www.kaggle.com/c/titanic) as an example.
 
 Good tutorial to feature engineering, filling in missing data and interpreting data is found in this [82% Kaggle tutorial](https://www.kaggle.com/gunesevitan/advanced-feature-engineering-tutorial-with-titanic)
 
+0. Establish a baseline score
+   1. Make a simple prediction (simple logic, logistic regression) as quickly as possible to establish a baseline score to compare against
 1. Find missing values
 2. Decide how to fill missing values
    1. Inspect the data - which samples are missing data (for very few, maybe the data offers a hint)
@@ -324,6 +326,15 @@ df_all = pd.concat([df_all, title], axis=1)
 
 ```python
 X_train = StandardScaler().fit_transform(df_train.drop(columns=drop_cols))
+```
+
+# Measuring accuracy
+
+Using `accuracy_score` to measure accuracy between prediction and targets:
+
+```python
+from sklearn.metrics import accuracy_score
+print(accuracy_score(y_true, y_predict))
 ```
 
 # Cross validating across models
