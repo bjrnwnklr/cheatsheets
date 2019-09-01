@@ -1,4 +1,8 @@
-# Pandas cheatsheet
+---
+title: Pandas cheatsheet
+author: Björn Winkler
+date: 10-Aug-2019
+---
 
 # Basics
 
