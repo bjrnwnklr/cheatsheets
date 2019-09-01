@@ -238,6 +238,15 @@ print('Median age of all passengers: {}'.format(df_all['Age'].median()))
 df_all['Age'] = df_all.groupby(['Sex', 'Pclass'])['Age'].apply(lambda x: x.fillna(x.median()))
 ```
 
+This is an alternative using `groupby` and `transform` - it avoids using `apply` and `lambda`, which is inefficient:
+
+```python
+# apply mean to all except where NaN values are (i.e. no groups)
+df['value'] = df['value'].fillna(df.groupby('category')['value'].transform('mean'))
+# apply overall mean to all remaining NaN rows (where we didn't have a group value)
+df['value'] = df['value'].fillna(df['value'].mean())
+```
+
 ## Categorizing data into bins
 
 ### Categorizing age groups into bins.
