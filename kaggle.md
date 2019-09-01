@@ -226,6 +226,7 @@ plt.show()
 Using Pclass and Sex to fill missing Age values with the `median` value for Sex/Pclass combinations (could also use Title/Pclass combination):
 
 ```python
+# this might be inefficient: should put the ['Age'] before the .median()
 age_by_pclass_sex = df_all.groupby(['Sex', 'Pclass']).median()['Age']
 
 for pclass in range(1, 4):
