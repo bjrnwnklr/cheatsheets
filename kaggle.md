@@ -27,8 +27,11 @@ Good tutorial to feature engineering, filling in missing data and interpreting d
    3. If categorical features have very distinct classes with different survival rates, those classes can be used as new features with one-hot encoding. Some of those classes also may be combined with each other to make new features.
 4. Feature engineering
    1. Bin continuous features, using `pd.qcut` (creates bins of equal size)
+      1. Binning features generally has no beneficial effect for tree-based models, as these models can learn to split continuous data into bins if necessary.
    2. Label encode non-numerical features using `LabelEncoder`. 
    3. One hot encoding categorical features using `OneHotEncoder` of `pd.get_dummies`
+      1. Use `get_dummies` on a DataFrame containing both the training and the test data. This is important to ensure categorical values are represented in the same way in the training set and the test set. `OneHotEncoder` can deal with that automatically.
+      2. Use `ColumnTransformer` to automate scaling and one hot encoding easily.
 5. Drop any columns that are not required
 6. Scale the columns using `StandardScaler`
 7. Run through a model, using cross validation
