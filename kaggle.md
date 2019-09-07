@@ -224,6 +224,15 @@ plt.show()
 
 # Wrangling data
 
+
+## Adding a column with mean of a group
+
+This adds a new column `fare_norm` with the Fare divided by the number of the same tickets (e.g. if there were 3 tickets with the same number, divide the fare for each ticket holder by 3)
+
+```python
+df_all['fare_norm'] = df_all.groupby(['Ticket'])['Fare'].transform(lambda x: x / x.count())
+```
+
 ## Filling missing data
 
 Using Pclass and Sex to fill missing Age values with the `median` value for Sex/Pclass combinations (could also use Title/Pclass combination):
