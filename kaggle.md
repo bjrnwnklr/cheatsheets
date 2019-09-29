@@ -327,34 +327,40 @@ df_temp = pd.concat([df_temp, pclass_df], axis=1)
 
 ## Using ColumnTransformer to OneHotEncode and StandardScale data in one go
 
-`ColumnTransfomer`
+`ColumnTransfomer` can be used to transform multiple columns in one go - should be the last step before fitting the model.
+
+- `OneHotEncoder` can be used for _categorical_ data
+- `StandardScaler` or `KBinsDiscretizer` can be used for continuous data
+
+Some of the transformers (e.g. `OneHotEncoder`) offer the `get_feature_names_` method to get the new column names. By specifying the column names, the column names will be used as suffix for the new column names. The `named_transfomers_` attribute provides access to the properties of the various transformers used.
+
+- The output of `ColumnTransformer` is a numpy array, so doesn't have column names. These need to be added back in:
+- We are using the `get_feature_names_` method of `OneHotEncoder` and adding the column names for the columns scaled with `StandardScaler` to a list of columns
+- This is then used to create a Pandas Dataframe with the `ColumnTransformer` output 
 
 ```python
 from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.preprocessing import OneHotEncoder, StandardScaler, KBinsDiscretizer
+
+cat_columns = ['Pclass',
+                'Embarked',
+                'Sex',
+                'is_alone',
+                'family_size',
+                'missing_age']
+
+cont_columns = ['Age',
+                'Fare']
 
 column_trans = ColumnTransformer(
-    [('categorical', OneHotEncoder(sparse=False), ['Pclass',
-                                                   'Embarked',
-                                                   'Sex',
-                                                   'is_alone',
-                                                   'family_size',
-                                                   'missing_age']),
-     ('continuous', StandardScaler(), ['Age',
-                                       'Fare'])
+    [('categorical', OneHotEncoder(sparse=False), cat_columns),
+     ('continuous', StandardScaler(), cont_columns)
     ])
 
 column_trans.fit(df_all)
 
 # create column names (OneHotEncoder provides new column names, StandardScaler doesn't)
-col_names = list(column_trans.named_transformers_.categorical.get_feature_names(['Pclass',
-                                                   'Embarked',
-                                                   'Sex',
-                                                   'is_alone',
-                                                   'family_size',
-                                                   'missing_age'])) + ['Age_scaled', 'Fare_scaled']
-
-print(col_names)
+col_names = list(column_trans.named_transformers_.categorical.get_feature_names(cat_columns)) + [c + '_scaled' for c in cont_columns]
 
 df_all_processed = pd.DataFrame(data=column_trans.transform(df_all), columns=col_names)
 ```
