@@ -8,34 +8,33 @@ Useful tricks for Kaggle competitions.
 
 Using the [Titanic challenge](https://www.kaggle.com/c/titanic) as an example.
 
-
 # General approach
 
 Good tutorial to feature engineering, filling in missing data and interpreting data is found in this [82% Kaggle tutorial](https://www.kaggle.com/gunesevitan/advanced-feature-engineering-tutorial-with-titanic)
 
 0. Establish a baseline score
-   1. Make a simple prediction (simple logic, logistic regression) as quickly as possible to establish a baseline score to compare against
+    1. Make a simple prediction (simple logic, logistic regression) as quickly as possible to establish a baseline score to compare against
 1. Find missing values
-2. Decide how to fill missing values
-   1. Inspect the data - which samples are missing data (for very few, maybe the data offers a hint)
-   2. Use mean/median/mode - depending on type of data
-   3. Decide if grouping data together by existing features (e.g. Pclass / Title / Sex) will give better estimates for missing values
-   4. Google / research to find out if that can help filling missing data (e.g. based on historic values)
-3. Inspect distribution, correlation against targets    
-   1. Using `sns.distplot` for continuous features and `sns.countplot` for categorical (discrete) features
-   2. If split points and spikes are very visible in the continuous features, they can be captured easily with a decision tree algorithm, but neural networks may not be able to spot them.
-   3. If categorical features have very distinct classes with different survival rates, those classes can be used as new features with one-hot encoding. Some of those classes also may be combined with each other to make new features.
-4. Feature engineering
-   1. Bin continuous features, using `pd.qcut` (creates bins of equal size)
-      1. Binning features generally has no beneficial effect for tree-based models, as these models can learn to split continuous data into bins if necessary.
-   2. Label encode non-numerical features using `LabelEncoder`. 
-   3. One hot encoding categorical features using `OneHotEncoder` of `pd.get_dummies`
-      1. Use `get_dummies` on a DataFrame containing both the training and the test data. This is important to ensure categorical values are represented in the same way in the training set and the test set. `OneHotEncoder` can deal with that automatically.
-      2. Use `ColumnTransformer` to automate scaling and one hot encoding easily.
-5. Drop any columns that are not required
-6. Scale the columns using `StandardScaler`
-7. Run through a model, using cross validation
-8. Compare feature importance
+1. Decide how to fill missing values
+    1. Inspect the data - which samples are missing data (for very few, maybe the data offers a hint)
+    2. Use mean/median/mode - depending on type of data
+    3. Decide if grouping data together by existing features (e.g. Pclass / Title / Sex) will give better estimates for missing values
+    4. Google / research to find out if that can help filling missing data (e.g. based on historic values)
+1. Inspect distribution, correlation against targets
+    1. Using `sns.distplot` for continuous features and `sns.countplot` for categorical (discrete) features
+    2. If split points and spikes are very visible in the continuous features, they can be captured easily with a decision tree algorithm, but neural networks may not be able to spot them.
+    3. If categorical features have very distinct classes with different survival rates, those classes can be used as new features with one-hot encoding. Some of those classes also may be combined with each other to make new features.
+1. Feature engineering
+    1. Bin continuous features, using `pd.qcut` (creates bins of equal size)
+        1. Binning features generally has no beneficial effect for tree-based models, as these models can learn to split continuous data into bins if necessary.
+    2. Label encode non-numerical features using `LabelEncoder`.
+    3. One hot encoding categorical features using `OneHotEncoder` or `pd.get_dummies`
+        1. Use `get_dummies` on a DataFrame containing both the training and the test data. This is important to ensure categorical values are represented in the same way in the training set and the test set. `OneHotEncoder` can deal with that automatically.
+        2. Use `ColumnTransformer` to automate scaling and one hot encoding easily.
+1. Drop any columns that are not required
+1. Scale the columns using `StandardScaler`
+1. Run through a model, using cross validation
+1. Compare feature importance
 
 # Describing the dataset
 
@@ -147,29 +146,29 @@ surv = df_train['Survived'] == 1
 fig, axs = plt.subplots(ncols=2, nrows=2, figsize=(20, 20))
 plt.subplots_adjust(right=1.5)
 
-for i, feature in enumerate(cont_features):    
+for i, feature in enumerate(cont_features):
     # Distribution of survival in feature
     sns.distplot(df_train[~surv][feature], label='Not Survived', hist=True, color='#e74c3c', ax=axs[0][i])
     sns.distplot(df_train[surv][feature], label='Survived', hist=True, color='#2ecc71', ax=axs[0][i])
-    
+
     # Distribution of feature in dataset
     sns.distplot(df_train[feature], label='Training Set', hist=False, color='#e74c3c', ax=axs[1][i])
     sns.distplot(df_test[feature], label='Test Set', hist=False, color='#2ecc71', ax=axs[1][i])
-    
+
     axs[0][i].set_xlabel('')
     axs[1][i].set_xlabel('')
-    
-    for j in range(2):        
+
+    for j in range(2):
         axs[i][j].tick_params(axis='x', labelsize=20)
         axs[i][j].tick_params(axis='y', labelsize=20)
-    
+
     axs[0][i].legend(loc='upper right', prop={'size': 20})
     axs[1][i].legend(loc='upper right', prop={'size': 20})
     axs[0][i].set_title('Distribution of Survival in {}'.format(feature), size=20, y=1.05)
 
 axs[1][0].set_title('Distribution of {} Feature'.format('Age'), size=20, y=1.05)
 axs[1][1].set_title('Distribution of {} Feature'.format('Fare'), size=20, y=1.05)
-        
+
 plt.show()
 ```
 
@@ -181,15 +180,15 @@ cat_features = ['Embarked', 'Parch', 'Pclass', 'Sex', 'SibSp', 'Deck']
 fig, axs = plt.subplots(ncols=2, nrows=3, figsize=(20, 20))
 plt.subplots_adjust(right=1.5, top=1.25)
 
-for i, feature in enumerate(cat_features, 1):    
+for i, feature in enumerate(cat_features, 1):
     plt.subplot(2, 3, i)
     sns.countplot(x=feature, hue='Survived', data=df_train)
-    
+
     plt.xlabel('{}'.format(feature), size=20, labelpad=15)
-    plt.ylabel('Passenger Count', size=20, labelpad=15)    
+    plt.ylabel('Passenger Count', size=20, labelpad=15)
     plt.tick_params(axis='x', labelsize=20)
     plt.tick_params(axis='y', labelsize=20)
-    
+
     plt.legend(['Not Survived', 'Survived'], loc='upper center', prop={'size': 18})
     plt.title('Count of Survival in {} Feature'.format(feature), size=20, y=1.05)
 
@@ -212,10 +211,10 @@ fig, axs = plt.subplots(nrows=2, figsize=(20, 20))
 sns.heatmap(df_train.drop(['PassengerId'], axis=1).corr(), ax=axs[0], annot=True, square=True, cmap='coolwarm', annot_kws={'size': 14})
 sns.heatmap(df_test.drop(['PassengerId'], axis=1).corr(), ax=axs[1], annot=True, square=True, cmap='coolwarm', annot_kws={'size': 14})
 
-for i in range(2):    
+for i in range(2):
     axs[i].tick_params(axis='x', labelsize=14)
     axs[i].tick_params(axis='y', labelsize=14)
-    
+
 axs[0].set_title('Training Set Correlations', size=15)
 axs[1].set_title('Test Set Correlations', size=15)
 
@@ -223,7 +222,6 @@ plt.show()
 ```
 
 # Wrangling data
-
 
 ## Adding a column with mean of a group
 
@@ -314,7 +312,7 @@ Non-numerical features are converted to numerical type with `LabelEncoder`. Labe
 non_numeric_features = ['Embarked', 'Sex', 'Deck', 'Title', 'Family_Size_Grouped', 'Age', 'Fare']
 
 for df in dfs:
-    for feature in non_numeric_features:        
+    for feature in non_numeric_features:
         df[feature] = LabelEncoder().fit_transform(df[feature])
 ```
 
@@ -325,6 +323,40 @@ One hot encoding categorical data, e.g. Pclass
 ```python
 pclass_df = pd.get_dummies(df_temp['Pclass'], prefix='Pclass')
 df_temp = pd.concat([df_temp, pclass_df], axis=1)
+```
+
+## Using ColumnTransformer to OneHotEncode and StandardScale data in one go
+
+`ColumnTransfomer`
+
+```python
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
+column_trans = ColumnTransformer(
+    [('categorical', OneHotEncoder(sparse=False), ['Pclass',
+                                                   'Embarked',
+                                                   'Sex',
+                                                   'is_alone',
+                                                   'family_size',
+                                                   'missing_age']),
+     ('continuous', StandardScaler(), ['Age',
+                                       'Fare'])
+    ])
+
+column_trans.fit(df_all)
+
+# create column names (OneHotEncoder provides new column names, StandardScaler doesn't)
+col_names = list(column_trans.named_transformers_.categorical.get_feature_names(['Pclass',
+                                                   'Embarked',
+                                                   'Sex',
+                                                   'is_alone',
+                                                   'family_size',
+                                                   'missing_age'])) + ['Age_scaled', 'Fare_scaled']
+
+print(col_names)
+
+df_all_processed = pd.DataFrame(data=column_trans.transform(df_all), columns=col_names)
 ```
 
 ## Extracting data
