@@ -33,8 +33,9 @@ Good tutorial to feature engineering, filling in missing data and interpreting d
         2. Use `ColumnTransformer` to automate scaling and one hot encoding easily.
 1. Drop any columns that are not required
 1. Scale the columns using `StandardScaler`
-1. Run through a model, using cross validation
-1. Compare feature importance
+   1. This is very important for a number of models, e.g. SVC relies on scaled data.
+2. Run through a model, using cross validation
+3. Compare feature importance
 
 # Describing the dataset
 
@@ -62,7 +63,34 @@ Cabin          204 non-null object
 Embarked       889 non-null object
 dtypes: float64(2), int64(5), object(5)
 memory usage: 83.7+ KB
+```
 
+## Finding missing data in a column
+
+Show missing values across all columns:
+
+```python
+df_train_raw.isna().sum()
+
+PassengerId      0
+Survived         0
+Pclass           0
+Name             0
+Sex              0
+Age            177
+SibSp            0
+Parch            0
+Ticket           0
+Fare             0
+Cabin          687
+Embarked         2
+dtype: int64
+```
+
+Show missing values in one column:
+
+```python
+df_all.loc[df_train_raw['Embarked'].isna()]
 ```
 
 # Initial analysis
@@ -195,6 +223,21 @@ for i, feature in enumerate(cat_features, 1):
 plt.show()
 ```
 
+### Showing subplots (Countplot) for a number of columns
+
+The trick here is to use the `plt.subplot(2, 3, i)` in the loop - this moves to the next subplot.
+
+```python
+cols = ['title_norm', 'Pclass', 'SibSp', 'Parch', 'missing_age']
+fem = df_train[df_train['Sex'] == 'female']
+
+fig, axes = plt.subplots(2, 3, figsize=(16, 10))
+
+for i, feature in enumerate(cols, 1):
+    plt.subplot(2, 3, i)
+    sns.countplot(x=feature, hue='Survived', data=fem)
+```
+
 ### Barplot to show distribution across categories
 
 ```python
@@ -229,6 +272,71 @@ This adds a new column `fare_norm` with the Fare divided by the number of the sa
 
 ```python
 df_all['fare_norm'] = df_all.groupby(['Ticket'])['Fare'].transform(lambda x: x / x.count())
+```
+
+## Using `groupby` to group data and iterate through the groups
+
+`groupby` is not trivial to use - the output can be confusing. Here are some nifty tricks how to use `groupby` and the resulting grouped data.
+
+Group data by `Last_Name` and `Fare` columns.
+
+```python
+df_group = df_all[['Survived','Name', 'Last_Name', 'Fare', 'Ticket', 'PassengerId',
+                           'SibSp', 'Parch', 'Age', 'Cabin']].groupby(['Last_Name', 'Fare'])
+```
+
+Looking at the number of records.
+
+```python
+df_group.count()
+```
+
+Printing out all key / group pairs (this can be long but shows the structure).
+
+```python
+for key, grp in df_group:
+    print(key, grp)
+```
+
+Show all groups contained in the grouped object. There is more information in this [stackoverflow article](https://stackoverflow.com/questions/14734533/how-to-access-pandas-groupby-dataframe-by-key).
+
+```python
+df_group.groups
+```
+
+Show the grouped dataframe for a particular key (e.g. a Name / Fare combination).
+
+```python
+allison = df_group.get_group(('Allison', 151.55))
+```
+
+Iterate through a group.
+
+```python
+for ind, row in allison.iterrow():
+    print(ind)
+    print(row['Survived'], row['Name'])
+```
+
+Putting it all together. Going through groups of Name/Fare combinations, identifying families > 1, then finding values for each group and updating a record for each passenger that is part of the family. This can be slow for a large number of records!
+
+```python
+for _, grp_df in df_all[['Survived','Name', 'Last_Name', 'Fare', 'Ticket', 'PassengerId',
+                           'SibSp', 'Parch', 'Age', 'Cabin']].groupby(['Last_Name', 'Fare']):
+    
+    if (len(grp_df) != 1):
+        # A Family group is found.
+        for ind, row in grp_df.iterrows():
+            smax = grp_df.drop(ind)['Survived'].max()
+            smin = grp_df.drop(ind)['Survived'].min()
+            passID = row['PassengerId']
+            if (smax == 1.0):
+                df_all.loc[df_all['PassengerId'] == passID, 'Family_Survival'] = 1
+            elif (smin==0.0):
+                df_all.loc[df_all['PassengerId'] == passID, 'Family_Survival'] = 0
+
+print("Number of passengers with family survival information:", 
+      df_all.loc[df_all['Family_Survival'] != 0.5].shape[0])
 ```
 
 ## Filling missing data
@@ -365,6 +473,24 @@ col_names = list(column_trans.named_transformers_.categorical.get_feature_names(
 df_all_processed = pd.DataFrame(data=column_trans.transform(df_all), columns=col_names)
 ```
 
+### Using `passthrough` with `ColumnTransformer` to include columns in output without any processing
+
+```python
+cat_columns = ['Pclass',
+               'Age_group']
+
+other_columns = ['Sex',
+                 'family_size',
+                 'is_alone',
+                 'Fare_bin_code'
+                ]
+
+column_trans = ColumnTransformer(
+    [('categorical', OneHotEncoder(sparse=False), cat_columns),
+     ('pass', 'passthrough', other_columns)
+    ])
+```
+
 ## Extracting data
 
 ### Extracting the title from a column with names
@@ -386,6 +512,14 @@ df_all = pd.concat([df_all, title], axis=1)
 
 ```python
 X_train = StandardScaler().fit_transform(df_train.drop(columns=drop_cols))
+```
+
+Scale data at the end before using the model! Scale train and test sets separately (i.e. fit the model using the training data, then transform the test data):
+
+```python
+std_scaler = StandardScaler()
+X_train = std_scaler.fit_transform(X_train)
+X_test = std_scaler.transform(X_test)
 ```
 
 # Measuring accuracy
@@ -444,6 +578,51 @@ for c in cols_sets:
 
 How to find out if our model is overfitting (using cross validation and train vs test set)
 
+# Using `GridSearchCV` to find the best hyperparameters for the model
+
+`GridSearchCV` can be used to find hyperparameters. First, prepare the parameters to run through:
+
+```python
+clf = DecisionTreeClassifier()
+
+hyperparams = {
+    'max_depth': list(range(1, 30)),
+    'min_samples_leaf': list(range(1, 10, 10)),
+    'max_features': list(range(1, 10))
+}
+```
+
+Then, use the grid search to run through the parameters:
+
+```python
+from sklearn.model_selection import GridSearchCV
+
+gd = GridSearchCV(clf, param_grid=hyperparams, verbose=True, cv=10, scoring='accuracy', return_train_score=False, n_jobs=-1)
+gd.fit(X_train, y_train)
+
+print('Best score: ', gd.best_score_)
+print('Best estimator: ', gd.best_estimator_)
+```
+
+Then, use the found best estimator to make a prediction and submit data:
+
+```python
+model_version = "5g_svc"
+
+gd.best_estimator_.fit(X_train, y_train)
+y_pred = gd.best_estimator_.predict(X_test)
+
+# test data starts at `split`
+results = df_all[split:].copy()
+results['Survived'] = y_pred
+
+timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M')
+
+# write the data to a file
+f = 'titanic_v{}_{}.csv'.format(model_version, timestamp)
+results[['PassengerId', 'Survived']].to_csv(f, header=True, index=False)
+```
+
 # Predicting and submission
 
 Predicting data using a set of columns and a model
@@ -474,7 +653,7 @@ Create the submission:
 
 ```python
 model_version = "2a"
-timestamp = datetime.now().strftime('%Y-%m-%d_%H-%m')
+timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M')
 
 # write the data to a file
 f = 'titanic_v{}_{}.csv'.format(model_version, timestamp)
