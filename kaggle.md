@@ -33,9 +33,9 @@ Good tutorial to feature engineering, filling in missing data and interpreting d
         2. Use `ColumnTransformer` to automate scaling and one hot encoding easily.
 1. Drop any columns that are not required
 1. Scale the columns using `StandardScaler`
-   1. This is very important for a number of models, e.g. SVC relies on scaled data.
-2. Run through a model, using cross validation
-3. Compare feature importance
+    1. This is very important for a number of models, e.g. SVC relies on scaled data.
+1. Run through a model, using cross validation
+1. Compare feature importance
 
 # Describing the dataset
 
@@ -129,6 +129,26 @@ df_all_corr[df_all_corr['Feature 1'] == 'Age']
 ```
 
 ## Plots
+
+### Simple scatter plot to show relationship of one variable against target (regression)
+
+```python
+var = 'TotalBsmtSF'
+# concat targets with variable to new dataframe
+data = pd.concat([df_train['SalePrice'], df_train[var]], axis=1)
+# plot the data
+data.plot.scatter(x=var, y='SalePrice', ylim=(0,800000));
+```
+
+### Boxplot to show distribution for categorical variables (regression)
+
+```python
+var = 'OverallQual'
+data = pd.concat([df_train['SalePrice'], df_train[var]], axis=1)
+f, ax = plt.subplots(figsize=(8, 6))
+fig = sns.boxplot(x=var, y="SalePrice", data=data)
+fig.axis(ymin=0, ymax=800000);
+```
 
 ### FacetGrid
 
@@ -323,7 +343,7 @@ Putting it all together. Going through groups of Name/Fare combinations, identif
 ```python
 for _, grp_df in df_all[['Survived','Name', 'Last_Name', 'Fare', 'Ticket', 'PassengerId',
                            'SibSp', 'Parch', 'Age', 'Cabin']].groupby(['Last_Name', 'Fare']):
-    
+
     if (len(grp_df) != 1):
         # A Family group is found.
         for ind, row in grp_df.iterrows():
@@ -335,7 +355,7 @@ for _, grp_df in df_all[['Survived','Name', 'Last_Name', 'Fare', 'Ticket', 'Pass
             elif (smin==0.0):
                 df_all.loc[df_all['PassengerId'] == passID, 'Family_Survival'] = 0
 
-print("Number of passengers with family survival information:", 
+print("Number of passengers with family survival information:",
       df_all.loc[df_all['Family_Survival'] != 0.5].shape[0])
 ```
 
@@ -437,14 +457,14 @@ df_temp = pd.concat([df_temp, pclass_df], axis=1)
 
 `ColumnTransfomer` can be used to transform multiple columns in one go - should be the last step before fitting the model.
 
-- `OneHotEncoder` can be used for _categorical_ data
-- `StandardScaler` or `KBinsDiscretizer` can be used for continuous data
+-   `OneHotEncoder` can be used for _categorical_ data
+-   `StandardScaler` or `KBinsDiscretizer` can be used for continuous data
 
 Some of the transformers (e.g. `OneHotEncoder`) offer the `get_feature_names_` method to get the new column names. By specifying the column names, the column names will be used as suffix for the new column names. The `named_transfomers_` attribute provides access to the properties of the various transformers used.
 
-- The output of `ColumnTransformer` is a numpy array, so doesn't have column names. These need to be added back in:
-- We are using the `get_feature_names_` method of `OneHotEncoder` and adding the column names for the columns scaled with `StandardScaler` to a list of columns
-- This is then used to create a Pandas Dataframe with the `ColumnTransformer` output 
+-   The output of `ColumnTransformer` is a numpy array, so doesn't have column names. These need to be added back in:
+-   We are using the `get_feature_names_` method of `OneHotEncoder` and adding the column names for the columns scaled with `StandardScaler` to a list of columns
+-   This is then used to create a Pandas Dataframe with the `ColumnTransformer` output
 
 ```python
 from sklearn.compose import ColumnTransformer
