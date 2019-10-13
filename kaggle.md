@@ -133,21 +133,25 @@ df_all_corr[df_all_corr['Feature 1'] == 'Age']
 ### Simple scatter plot to show relationship of one variable against target (regression)
 
 ```python
-var = 'TotalBsmtSF'
-# concat targets with variable to new dataframe
-data = pd.concat([df_train['SalePrice'], df_train[var]], axis=1)
-# plot the data
-data.plot.scatter(x=var, y='SalePrice', ylim=(0,800000));
+cat_cols = ['LotArea']
+
+fig, axes = plt.subplots(1, 2, figsize=(10, 5))
+
+for ax, var in zip(axes, cat_cols):
+    data = pd.concat([df_targets, df_train_raw[var]], axis=1)
+    sns.scatterplot(var, 'SalePrice', data=data, ax=ax)
 ```
 
 ### Boxplot to show distribution for categorical variables (regression)
 
 ```python
-var = 'OverallQual'
-data = pd.concat([df_train['SalePrice'], df_train[var]], axis=1)
-f, ax = plt.subplots(figsize=(8, 6))
-fig = sns.boxplot(x=var, y="SalePrice", data=data)
-fig.axis(ymin=0, ymax=800000);
+cat_cols = ['YrSold', 'MoSold', 'BedroomAbvGr']
+
+fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+
+for ax, var in zip(axes, cat_cols):
+    data = pd.concat([df_targets, df_train_raw[var]], axis=1)
+    sns.boxplot(var, 'SalePrice', data=data, ax=ax)
 ```
 
 ### FacetGrid
@@ -404,7 +408,7 @@ fig, axs = plt.subplots(figsize=(22, 9))
 sns.countplot(x='Fare', hue='Survived', data=df_all)
 ```
 
-### Adding a new column with summarized titles
+## Adding a new column with summarized titles
 
 ```python
 title_transform_rev = {
@@ -424,7 +428,26 @@ title = get_title(df_temp)
 df_temp = pd.concat([df_temp, title], axis=1)
 ```
 
-### Converting categorical into binary
+## Converting two columns with year / month into a timeseries and number of days since start
+
+-   Use `pd.to_datetime` to convert two columns with year and month into a timeseries. `pd.to_datetime` also expects a day, so just use 1 for the days. You can pass a dictionary into the `to_datetime` function.
+-   Take the difference between the current date and the minimum date of the column to get days since the start (= minimum of the series)
+-   Use `dataframe.dt.days` to convert the number of days from a datetime object into integer
+
+Finally, sort the dataframe by the date and split into features and targets again.
+
+```python
+# use pd.to_datetime to convert columns with year and month into timeseries
+df_train_base['DateSold'] = pd.to_datetime({'year': df_train_base['YrSold'], 'month': df_train_base['MoSold'], 'day': 1})
+df_train_base['days'] = (df_train_base['DateSold'] - df_train_base['DateSold'].min()).dt.days
+
+# sort by days (need to add in targets to sort them as well)
+df_train_temp = pd.concat([df_train_base, df_targets], axis=1).sort_values(by=['DateSold'])
+df_train_base_sort = df_train_temp.drop(['SalePrice'], axis=1)
+df_targets_sort = df_train_temp[['SalePrice']]
+```
+
+## Converting categorical into binary
 
 Converting male/female into 0 / 1
 
@@ -432,7 +455,7 @@ Converting male/female into 0 / 1
 df_temp['Sex'] = df_temp['Sex'].map({'male': 0, 'female': 1})
 ```
 
-### Using `LabelEncoder` to convert non-numerical features into numerical
+## Using `LabelEncoder` to convert non-numerical features into numerical
 
 Non-numerical features are converted to numerical type with `LabelEncoder`. LabelEncoder basically labels the classes from 0 to n. This process is necessary for Machine Learning algorithms to learn from those features.
 
