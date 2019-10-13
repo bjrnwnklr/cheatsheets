@@ -67,7 +67,7 @@ memory usage: 83.7+ KB
 
 ## Finding missing data in a column
 
-Show missing values across all columns:
+### Show missing values across all columns:
 
 ```python
 df_train_raw.isna().sum()
@@ -87,10 +87,20 @@ Embarked         2
 dtype: int64
 ```
 
-Show missing values in one column:
+### Show missing values in one column:
 
 ```python
 df_all.loc[df_train_raw['Embarked'].isna()]
+```
+
+### Show missing values for all columns missing data only:
+
+```python
+dfs_to_check = [df_train_raw, df_test_raw]
+
+for df_check in dfs_to_check:
+    d = df_check.isna().sum()
+    print(d[d > 0])
 ```
 
 # Initial analysis
