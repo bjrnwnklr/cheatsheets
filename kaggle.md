@@ -662,8 +662,13 @@ Then, use the found best estimator to make a prediction and submit data:
 ```python
 model_version = "5g_svc"
 
-gd.best_estimator_.fit(X_train, y_train)
-y_pred = gd.best_estimator_.predict(X_test)
+# this is actually not required - you can directly use the GridSearch instance and use the predict and score methods
+# GridSearchCV automatically fits the best performing model to the gd instance, so using best_estimator is not necessary
+#gd.best_estimator_.fit(X_train, y_train)
+#y_pred = gd.best_estimator_.predict(X_test)
+
+# use the model automatically fit to the gridsearch instance, using the best parameters
+y_pred = gd.predict(X_test)
 
 # test data starts at `split`
 results = df_all[split:].copy()
@@ -674,6 +679,38 @@ timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M')
 # write the data to a file
 f = 'titanic_v{}_{}.csv'.format(model_version, timestamp)
 results[['PassengerId', 'Survived']].to_csv(f, header=True, index=False)
+```
+
+## Visualizing the results of grid search
+
+Using a heatmap, visualize the results from gridsearch for 2 parameters (visualizing more than two parameters is difficult, but you can just output the results into a pandas dataframe and search for max values across the `cv_results_.mean_test_score` to find the best combination of parameters).
+
+Using this on the Titanic model, tuning the gamma and C parameters produced minimally better results on the training dataset, but the exact same results on the test set. The tuning was minimal against the broad parameters found with gridsearch, so it seems that finding the right order of magnitude for C and gamma is much more important than finetuning them.
+
+E.g. differences for C between 1, 10, 100, 200 had massively better values at 100, but then the difference between 100 and 106 (best value found when further finetuning) was minimal.
+
+```python
+# save results of the gridsearch in a pandas dataframe
+gs_results = pd.DataFrame(gd.cv_results_)
+
+# we searched over 8 * 6 parameters, so need to reshape the results into an 8 * 6 array
+scores = np.array(gs_results.mean_test_score).reshape(8, 6)
+
+fig = plt.figure(figsize=(8, 8))
+sns.heatmap(
+    scores,
+    cmap='coolwarm',
+    square=True,
+    annot=True,
+    annot_kws={'size': 12},
+    xticklabels=hyperparams['gamma'],
+    yticklabels=hyperparams['C'],
+    cbar=False
+)
+
+plt.xlabel=('gamma')
+plt.ylabel=('C')
+plt.title('SVC')
 ```
 
 # Predicting and submission
