@@ -466,3 +466,52 @@ def classification_rate(Y, P):
 
 print('Classification rate: {}'.format(classification_rate(Y, predictions)))
 ```
+
+### Closed form solution using the Bayes classifier
+
+If 2 classed have a _Gaussian distribution_ and the same _covariance_ and _different means_ (e.g. two blobs), you can derive a closed form solution using the Bayes classifier.
+
+Gaussian probability distribution function (PDF):
+
+$$
+\begin{aligned}
+P(x) &= \frac{1}{\sqrt{(2\pi)^D \vert\Sigma\vert}} e^{-\frac{1}{2}(x - \mu)^T \Sigma^{-1}(x - \mu)}
+\end{aligned}
+$$
+
+with
+
+$$
+\begin{aligned}
+    \pi &: \\
+    \Sigma &: \\
+    \mu &: \\
+\end{aligned}
+$$
+
+**Bayes rule**:
+
+$$
+\begin{aligned}
+    P(Y \vert X) &= \frac{P(X \vert Y) P(Y)}{P(X)}
+\end{aligned}
+$$
+
+with
+
+$$
+\begin{aligned}
+    P(Y \vert X) &= \text{probability of Y given X ("the posterior")} \\
+    P(Y) &= \text{probability of Y ("the prior"), the frequency with which class Y appears} \\
+    P(Y=1) &= \text{number of times class 1 appears / total samples} \\
+\end{aligned}
+$$
+
+Putting Bayes rule into the logistic regression framework gives us the closed form solution:
+
+$$
+\begin{aligned}
+    w^T &= (\mu^T_1 - \mu^T_0) \Sigma^{-1} \\
+    b &= \frac{1}{2}\mu^T_0 \Sigma^{-1} \mu_0 - \frac{1}{2}\mu^T_1 \Sigma^{-1} \mu_1 - \ln\frac{\alpha}{1-\alpha}
+\end{aligned}
+$$
