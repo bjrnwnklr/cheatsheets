@@ -37,6 +37,75 @@ Good tutorial to feature engineering, filling in missing data and interpreting d
 1. Run through a model, using cross validation
 1. Compare feature importance
 
+
+# Libraries to load
+
+## Regression
+
+```python
+# Base libraries
+import pandas as pd
+import numpy as np
+from datetime import datetime
+
+# plotting 
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# sklearn basics
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, KBinsDiscretizer, LabelEncoder
+from sklearn.compose import ColumnTransformer
+from sklearn.model_selection import cross_val_score, cross_validate
+from sklearn.metrics import mean_squared_error, accuracy_score, confusion_matrix
+
+# regression models
+from sklearn.linear_model import LinearRegression
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.svm import SVR
+
+# sklearn grid search
+from sklearn.model_selection import GridSearchCV
+
+%matplotlib inline
+```
+
+## Classification
+
+```python
+# Base libraries
+import pandas as pd
+import numpy as np
+from datetime import datetime
+
+# plotting 
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# sklearn basics
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, KBinsDiscretizer, LabelEncoder
+from sklearn.compose import ColumnTransformer
+from sklearn.model_selection import cross_val_score, cross_validate
+from sklearn.metrics import mean_squared_error, accuracy_score, confusion_matrix
+
+# regression models
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.svm import SVC
+
+# sklearn grid search
+from sklearn.model_selection import GridSearchCV
+
+%matplotlib inline
+```
+
 # Describing the dataset
 
 ```python
