@@ -37,7 +37,6 @@ Good tutorial to feature engineering, filling in missing data and interpreting d
 1. Run through a model, using cross validation
 1. Compare feature importance
 
-
 # Libraries to load
 
 ## Regression
@@ -48,7 +47,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 
-# plotting 
+# plotting
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -69,6 +68,7 @@ from sklearn.svm import SVR
 
 # sklearn grid search
 from sklearn.model_selection import GridSearchCV
+from sklearn.pipeline import Pipeline, make_pipeline
 
 %matplotlib inline
 ```
@@ -81,7 +81,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 
-# plotting 
+# plotting
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -102,6 +102,7 @@ from sklearn.svm import SVC
 
 # sklearn grid search
 from sklearn.model_selection import GridSearchCV
+from sklearn.pipeline import Pipeline, make_pipeline
 
 %matplotlib inline
 ```
@@ -644,6 +645,8 @@ X_train = std_scaler.fit_transform(X_train)
 X_test = std_scaler.transform(X_test)
 ```
 
+This is best achieved using a Pipeline, which will ensure that the scaling is only applied to the training set (and also in Gridsearch only applied to the training set).
+
 # Measuring accuracy
 
 Using `accuracy_score` to measure accuracy between prediction and targets:
@@ -782,36 +785,51 @@ plt.ylabel=('C')
 plt.title('SVC')
 ```
 
-# Predicting and submission
+# Using a Pipeline to chain preprocessing and model together
 
-Predicting data using a set of columns and a model
+Using a Pipeline ensures that preprocessing steps are only applied to the training data. Use `make_pipeline` to build a pipeline with a very simple syntax.
+
+If using the pipeline with GridSearch, the param_grid has to use the names of the classes of the processing steps in all lower letters, then two underscores and the name of the parameter, e.g. `svc__C` for the `C` parameter used by a `SVC()` classifier.
+
+In the example, we chain a StandardScaler and a SVC classifier together, then run a grid search on the parameters.
 
 ```python
-best_cols = ['Sex', 'SibSp', 'Parch', 'Age_group_young', 'Age_group_child', 'Age_group_teenager',
-       'Age_group_young_adult', 'Age_group_adult', 'Age_group_senior',
-       'Pclass_1', 'Pclass_2', 'Pclass_3']
-clf = RandomForestClassifier(max_depth=5, n_estimators=100)
+clf = SVC()
 
-# using only those columns for train and test set, and extracting the targets from the training set
-df_train_sub = df_train[best_cols]
-df_test_sub = df_test[best_cols]
-df_train_survived = df_train['Survived']
+hyperparams = {
+    'svc__C': [0.1, 1, 2, 5, 10, 100, 200, 500],
+    'svc__gamma': [0.001, 0.01, 0.1, 1, 10, 100]
+}
 
-# fit the model
-clf.fit(df_train_sub, df_train_survived)
+pipe = make_pipeline(StandardScaler(), clf)
 
-# make the prediction
-prediction = clf.predict(df_test_sub)
+gd = GridSearchCV(pipe, param_grid=hyperparams, verbose=True, cv=10, n_jobs=1)
+gd.fit(X_train, y_train)
 
-# create a results column in a copy of the test dataframe
-results = df_test.copy()
-results['Survived'] = prediction
+print('Best score: ', gd.best_score_)
+print('Best parameters: ', gd.best_params_)
+print('Best estimator: ', gd.best_estimator_)
 ```
 
-Create the submission:
+# Predicting and submission
+
+Generate a prediction from a GridSearch:
 
 ```python
-model_version = "2a"
+model_version = "5g_svc"
+
+# this is actually not required - you can directly use the GridSearch instance and use the predict and score methods
+# GridSearchCV automatically fits the best performing model to the gd instance, so using best_estimator is not necessary
+#gd.best_estimator_.fit(X_train, y_train)
+#y_pred = gd.best_estimator_.predict(X_test)
+
+# use the model automatically fit to the gridsearch instance, using the best parameters
+y_pred = gd.predict(X_test)
+
+# test data starts at `split`
+results = df_all[split:].copy()
+results['Survived'] = y_pred
+
 timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M')
 
 # write the data to a file
