@@ -560,3 +560,54 @@ def cross_entropy_2(T, Y):
     E = -1 * (T.dot(np.log(Y)) + (1-T).dot(np.log(1-Y)))
     return E
 ```
+
+### Gradient Descent for Logistic Regression
+
+We can use Bayes method to find the _weights_ if the data is Gaussian distributed with equal covariance ($w^T = (\mu_1^T - \mu_0^T) \Sigma^{-1}$ etc), but we want something that works in general. Apparently we can't just solve the derivative for weights by setting to zero.
+
+So to find the derivative of J for w, we split the cost function J into 3 derivatives and multiply them together by the chain rule:
+
+$$
+\begin{aligned}
+    \frac{\partial J}{\partial w_i} &= \sum_{n=1}^N \frac{\partial J}{\partial y_n} \frac{\partial y_n}{\partial a_n} \frac{\partial a_n}{\partial w_i} \\
+    a_n &= w^T x_n
+\end{aligned}
+$$
+
+This gets us the following vectorized derivative for w:
+
+$$
+\begin{aligned}
+    \frac{\partial J}{\partial w} &= \sum_{n=1}^N (y_n - t_n) x_n
+\end{aligned}
+$$
+
+Written as the dot product, this is:
+
+$$
+\begin{aligned}
+    \frac{\partial J}{\partial w} &= X^T (Y - T)
+\end{aligned}
+$$
+
+Gradient descent then does the usual incremental adjustment to w:
+
+$$
+\begin{aligned}
+    w &= w - learningrate * \frac{\partial J}{\partial w} \\
+    Y &= \sigma(w^T X)
+\end{aligned}
+$$
+
+In code:
+
+```python
+learning_rate = 0.1
+for i in range(100):
+    # print cross entropy to show that it decreases across gradient descent
+    if i % 10 == 0:
+        print(cross_entropy_2(T, Y))
+
+    w -= learning_rate * Xb.T.dot(Y - T)
+    Y = sigmoid(Xb.dot(w))
+```
