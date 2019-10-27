@@ -515,3 +515,48 @@ $$
     b &= \frac{1}{2}\mu^T_0 \Sigma^{-1} \mu_0 - \frac{1}{2}\mu^T_1 \Sigma^{-1} \mu_1 - \ln\frac{\alpha}{1-\alpha}
 \end{aligned}
 $$
+
+## Cross Entropy Error function
+
+Linear regression uses the squared error function (sum of squared errors (target - prediction)). This assumes a Gaussian distributed error, because log(Gaussian) = squared function.
+
+Logistic Regression is not Gaussian distributed because
+
+-   Target is either 0 or 1 ($t_n$)
+-   Output is always a number between 0 and 1 ($y_n$)
+
+So the required error function has to be:
+
+-   0 if correct
+-   $> 0$ if not correct, more wrong = bigger cost
+
+**The Cross Entropy Error**
+
+$$
+\begin{aligned}
+    J &= -(t \log(y) +  (1-t)\log(1-y))
+\end{aligned}
+$$
+
+Depending on target $t$, only one of the terms matters:
+
+-   if t=1, only $t \log(y)$ matters, as $(1-t) = 0$
+-   if t=0, only $(1-t) \log(1-y)$ matters
+
+$log(y)$ is a number between 0 and $-\infty$ ($\log(0) = -\infty$, $log(1)=0$). So we take the negative, making the result between 0 and $\infty$.
+
+To get the error function, we sum up over the training data:
+
+$$
+\begin{aligned}
+    J &= -\sum_{n=1}^N t_n \log(y_n) + (1-t_n)\log(1-y_n)
+\end{aligned}
+$$
+
+Cross Entropy Error function in Python:
+
+```python
+def cross_entropy_2(T, Y):
+    E = -1 * (T.dot(np.log(Y)) + (1-T).dot(np.log(1-Y)))
+    return E
+```
