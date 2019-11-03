@@ -12,6 +12,8 @@ Using the [Titanic challenge](https://www.kaggle.com/c/titanic) as an example.
 
 Good tutorial to feature engineering, filling in missing data and interpreting data is found in this [82% Kaggle tutorial](https://www.kaggle.com/gunesevitan/advanced-feature-engineering-tutorial-with-titanic)
 
+A good approach to establish a regression baseline is explained in this [Housing tutorial](https://www.kaggle.com/apapiu/regularized-linear-models).
+
 0. Establish a baseline score
     1. Make a simple prediction (simple logic, logistic regression) as quickly as possible to establish a baseline score to compare against
 1. Find missing values
@@ -370,6 +372,45 @@ plt.show()
 
 # Wrangling data
 
+## Taking the log of numerical values
+
+Most of the machine learning algorithms work better if the features have a _normal distribution_. [When and why should you take the log of a distribution of numbers](https://stats.stackexchange.com/questions/18844/when-and-why-should-you-take-the-log-of-a-distribution-of-numbers).
+
+A handy function is `np.log1p`, which returns the log + 1 (to avoid errors for 0 values) of an array.
+
+### Comparing distribution with log distribution using a histogram
+
+```python
+prices = pd.DataFrame(
+    {'SalePrice': df_train_raw['SalePrice'], 'LogPrice': np.log1p(df_train_raw['SalePrice'])}
+)
+prices.hist()
+```
+
+### Determining skew of data and transforming to normal distribution using log
+
+-   Split features into numerical and categorical features
+-   use `scipy.stats.skew` to calculate skew. A skew > 0 indicates a long right tail
+-   Transform using `np.log1p` to get a normal distribution
+
+```python
+from scipy.stats import skew
+
+# split numeric and categorical columns
+num_features = df_all.dtypes[df_all.dtypes != 'object'].index
+cat_features = df_all.dtypes[df_all.dtypes == 'object'].index
+
+# find skew for numeric columns - do this based on training data to avoid leakage
+skewed_features = df_train_raw[num_features].apply(lambda x: skew(x.dropna()))
+
+# transform features with a skew > 0.75
+skewed_features = skewed_features[skewed_features > 0.75]
+skewed_features = skewed_features.index
+
+# transform full dataset
+df_all[skewed_features] = np.log1p(df_all[skewed_features])
+```
+
 ## Adding a column with mean of a group
 
 This adds a new column `fare_norm` with the Fare divided by the number of the same tickets (e.g. if there were 3 tickets with the same number, divide the fare for each ticket holder by 3)
@@ -443,7 +484,24 @@ print("Number of passengers with family survival information:",
       df_all.loc[df_all['Family_Survival'] != 0.5].shape[0])
 ```
 
-## Filling missing data
+## Filling missing data using `SimpleImputer`
+
+Use `SimpleImputer` to fill missing data (either mean, median or constant values). Use first on training set, then transform test set to avoid leakage (or use in a Pipeline).
+
+```python
+from sklearn.impute import SimpleImputer
+
+# fill values using the SimpleImputer
+# first use on training set
+imp = SimpleImputer(missing_values=np.nan, strategy='median')
+imp.fit(df_train)
+df_train_temp = pd.DataFrame(imp.transform(df_train), columns=df_train.columns)
+
+# transform the test set
+df_test_temp = pd.DataFrame(imp.transform(df_test), columns=df_test.columns)
+```
+
+## Filling missing data using groupby
 
 Using Pclass and Sex to fill missing Age values with the `median` value for Sex/Pclass combinations (could also use Title/Pclass combination):
 
@@ -647,13 +705,34 @@ X_test = std_scaler.transform(X_test)
 
 This is best achieved using a Pipeline, which will ensure that the scaling is only applied to the training set (and also in Gridsearch only applied to the training set).
 
-# Measuring accuracy
+# Metrics
 
-Using `accuracy_score` to measure accuracy between prediction and targets:
+## Accuracy
+
+Using `accuracy_score` to measure accuracy between prediction and targets - this is usually ok for classification.
 
 ```python
 from sklearn.metrics import accuracy_score
 print(accuracy_score(y_true, y_predict))
+```
+
+## RMSE
+
+Root mean square error is a good measure for regression. Can be implemented by either straight numpy or by using the `mean_squared_error` function and taking the square root of that.
+
+The `make_scorer` function can be used to define a custom scoring function for use in GridSearchCV. For _loss_ functions, use the `greater_is_better=False` parameter, then the grid search will optimize for small values.
+
+```python
+from sklearn.metrics import mean_squared_error, make_scorer
+
+# define scoring
+def rmse_score(y_true, y_pred):
+    return np.sqrt(((y_true - y_pred) ** 2).mean())
+
+def rmse_2(y_true, y_pred):
+    return np.sqrt(mean_squared_error(y_true, y_pred))
+
+score=make_scorer(rmse_2, greater_is_better=False)
 ```
 
 # Cross validating across models
