@@ -53,15 +53,19 @@ from datetime import datetime
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+# skew
+from scipy.stats import skew
+
 # sklearn basics
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, OneHotEncoder, KBinsDiscretizer, LabelEncoder
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, KBinsDiscretizer, LabelEncoder, PolynomialFeatures
 from sklearn.compose import ColumnTransformer
 from sklearn.model_selection import cross_val_score, cross_validate
-from sklearn.metrics import mean_squared_error, accuracy_score, confusion_matrix
+from sklearn.metrics import mean_squared_error, accuracy_score, confusion_matrix, make_scorer
 
 # regression models
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression, Ridge, Lasso
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
@@ -69,8 +73,8 @@ from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.svm import SVR
 
 # sklearn grid search
+from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import GridSearchCV
-from sklearn.pipeline import Pipeline, make_pipeline
 
 %matplotlib inline
 ```
@@ -376,7 +380,7 @@ plt.show()
 
 Most of the machine learning algorithms work better if the features have a _normal distribution_. [When and why should you take the log of a distribution of numbers](https://stats.stackexchange.com/questions/18844/when-and-why-should-you-take-the-log-of-a-distribution-of-numbers).
 
-A handy function is `np.log1p`, which returns the log + 1 (to avoid errors for 0 values) of an array.
+A handy function is `np.log1p`, which returns log(x + 1) (to avoid errors for 0 values) of an array. To reverse, use the `np.expm1` function (exp minus 1).
 
 ### Comparing distribution with log distribution using a histogram
 
