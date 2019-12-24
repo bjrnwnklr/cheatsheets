@@ -41,7 +41,7 @@ import re
 
 input_file = open(r'filename.txt', 'r')
 
-claims = [[*map(int, re.findall(r'-?\d+', l))] for l in input_file.splitlines() if l]
+claims = [[*map(int, re.findall(r'-?\d+', l))] for l in input_file.readlines() if l]
 ```
 
 ## 2. Splitting input into a list of tuples and converting to int at the same time
