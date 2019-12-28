@@ -11,6 +11,7 @@ Some cool tricks learned from Advent Of Code 2018
 - [Advent of code - cheatsheet](#advent-of-code---cheatsheet)
   - [1. Decoding some lines from input file](#1-decoding-some-lines-from-input-file)
   - [2. Splitting input into a list of tuples and converting to int at the same time](#2-splitting-input-into-a-list-of-tuples-and-converting-to-int-at-the-same-time)
+  - [2. Use a generator in a list comprehension to access multiple elements of a split:](#2-use-a-generator-in-a-list-comprehension-to-access-multiple-elements-of-a-split)
   - [2. Using regex to find data in input file and converting to timestamp](#2-using-regex-to-find-data-in-input-file-and-converting-to-timestamp)
   - [3. sorting a dictionary](#3-sorting-a-dictionary)
   - [4. finding maximum value /key in a dictionary](#4-finding-maximum-value-key-in-a-dictionary)
@@ -24,6 +25,8 @@ Some cool tricks learned from Advent Of Code 2018
     - [sorting a list of objects by tuple of object attributes](#sorting-a-list-of-objects-by-tuple-of-object-attributes)
   - [Advent of code 2018, day 20](#advent-of-code-2018-day-20)
     - [Parsing a regex like input string with branches and options](#parsing-a-regex-like-input-string-with-branches-and-options)
+  - [Topological sort](#topological-sort)
+  - [Binary search](#binary-search)
 
 ## 1. Decoding some lines from input file 
 
@@ -53,6 +56,13 @@ Input looks like:
 
 ```python
 coordinates_str = [tuple(map(int, line.split(','))) for line in input_file]
+```
+
+## 2. Use a generator in a list comprehension to access multiple elements of a split:
+
+```python
+# prepare input recipe
+inputs = [(x[1], int(x[0])) for x in (i.split(' ') for i in inp.split(', '))]
 ```
 
 ## 2. Using regex to find data in input file and converting to timestamp
@@ -204,4 +214,65 @@ for c in maze[1:-1]:
             distances[(x, y)] = distances[(pre_x, pre_y)] + 1
 
     pre_x, pre_y = x, y
+```
+
+## Topological sort
+
+Advent of Code 2019, day 14 part 1 / Advent of Code 2018, day 7 both use a topological sort algorithm. Topological sort is used to determine a sequence of tasks given a number of constraints.
+
+If a certain order of tasks is required, e.g. alphabetical or by importance, a `heapq` (priority queue) can be used for sorting. Otherwise a normal queue / list works fine too.
+
+```python
+# main queue to work on - can be a normal list, or a heapq if sorting is required
+recipe_queue = [element]
+# DO STUFF - not really required for generic implementation
+needed[element] = 1
+
+# requires a directed graph with two dictionaries of lists:
+# `recipes` has outgoing edges from an element
+# `incoming_to` has incoming edges to an element
+
+# Run a topological sort by removing incoming edges from elements that have been substituted
+while(recipe_queue):
+
+    # get next element from queue
+    right_element = recipe_queue.pop()
+    
+    # DO STUFF you need to do with the current element
+    multiplier = math.ceil(needed[right_element] / recipes[right_element][0])
+
+    # get all dependents (in generic implementation usa a graph with outgoing connections)
+    for left_element, left_quantity in recipes[right_element][1]:
+        # DO STUFF
+        needed[left_element] += left_quantity * multiplier
+        # remove edge from incoming edges
+        incoming_to[left_element].remove(right_element)
+        # check if no more predecessors, then add to recipe queue
+        if not left_element == 'ORE' and not incoming_to[left_element]:
+            recipe_queue.append(left_element)
+        
+    # since we processed the substitution, we don't need any further amount of the substituted element
+    # DO STUFF
+    needed[right_element] = 0
+    
+```
+
+## Binary search
+
+Used in Advent of Code 2019, day 14 part 2.
+
+Binary search can be used to hone in on a target value, instead of brute force running a function for increasing start values, you get an O(log(n)+1) performance.
+
+```python
+# requires a start value, then determine a lower value and an upper value to try. Result for lower value has to be lower than target value, result for upper value has to be higher than target value.
+# You can select upper value by multiplying start, or by exponentially increasing the start value.
+lower = start
+upper = start * 2
+
+# take the mid point between lower and upper.
+# initial starting value for binary search
+fuel = lower + ((upper - lower) // 2)
+
+while (((upper - fuel) > 0) and ((fuel - lower) > 0)):
+    
 ```
