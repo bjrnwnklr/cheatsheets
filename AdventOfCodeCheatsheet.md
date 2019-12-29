@@ -266,13 +266,32 @@ Binary search can be used to hone in on a target value, instead of brute force r
 ```python
 # requires a start value, then determine a lower value and an upper value to try. Result for lower value has to be lower than target value, result for upper value has to be higher than target value.
 # You can select upper value by multiplying start, or by exponentially increasing the start value.
+target = 1_000_000_000_000
+start = #... reasonable assumption of a start value
 lower = start
 upper = start * 2
 
 # take the mid point between lower and upper.
 # initial starting value for binary search
-fuel = lower + ((upper - lower) // 2)
+mid = lower + ((upper - lower) // 2)
 
-while (((upper - fuel) > 0) and ((fuel - lower) > 0)):
-    
+# check if the mid value has become either the upper or lower boundary - we have found a solution then
+while (((upper - mid) > 0) and ((mid - lower) > 0)):
+
+
+    # DO STUFF - produce a measurable output that can be compared to the target value
+    # ...
+    # ...
+    # ...
+
+    # get the measurable result so it can be compared to the target
+    measurable_result = needed['ORE']
+
+    # half the search window based on whether the result is > target or < target
+    if measurable_result < target:
+        lower = mid
+        mid += (upper - mid) // 2
+    else:
+        upper = mid
+        mid -= (mid - lower) // 2    
 ```
