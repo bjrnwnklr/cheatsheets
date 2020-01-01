@@ -174,6 +174,12 @@ _Fancy indexing_ is a term adopted by NumPy to describe indexing using integer a
 
 ## Transposing arrays and swapping axes
 
+Flipping a numpy array upside down:
+
+```python
+np.flipud(array)
+```
+
 # Plotting data using `matplotlib`
 
 ### Basic scatter plot:
