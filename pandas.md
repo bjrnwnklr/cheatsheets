@@ -26,9 +26,9 @@ df['City'].value_counts()
 
 ## Creating a Pivot table
 
-- Using `loc` and `.isin`, find all cities that are in a list
-- Create a pivot table, specifying index (rows) vs columns and the values to be used
-- Since there are only individual values in this table (i.e. only one value per row), the values are not aggregated. Otherwise. the standard function applied to the values is `mean`.
+-   Using `loc` and `.isin`, find all cities that are in a list
+-   Create a pivot table, specifying index (rows) vs columns and the values to be used
+-   Since there are only individual values in this table (i.e. only one value per row), the values are not aggregated. Otherwise. the standard function applied to the values is `mean`.
 
 ```python
 (df_g_cities.loc[df['City'].isin(g_10_cities_2016)]
@@ -82,18 +82,18 @@ df_g_cities = df_germany.loc[df_city_filter, city_columns]
 
 ## Create a list of the 10 biggest cities
 
-- Select only records from 2016 using `loc`
-- Sort by value column
-- Select first 10 records
-- Show only the 'City' column
-- Convert to a list
+-   Select only records from 2016 using `loc`
+-   Sort by value column
+-   Select first 10 records
+-   Show only the 'City' column
+-   Convert to a list
 
 ```python
 # 10 biggest cities in 2016
 g_10_cities_2016 = (df_g_cities.loc[
     df['Year'] == '2016']
     .sort_values(
-        by=['Value'], 
+        by=['Value'],
         ascending=False
     ))[:10]['City'].to_list()
 ```
@@ -110,10 +110,10 @@ df['City'].value_counts().sort_index().plot.bar()
 
 ## Plot a Pivot table
 
-- The plot function creates a line chart
-- If multiple lines are to be plotted, they have to be in a column each - so create the pivot with the columns that should be plotted as individual lines
-- otherwise, you can use `.T` to transpose the pivot if the lines to be plotted are rows
-- The `ax.legend` statement can be used to specify the location of the legend. Using `loc='upper left` and `bbox_to_anchor=(1, 1)` puts the upper left corner of the legend outside of the chart
+-   The plot function creates a line chart
+-   If multiple lines are to be plotted, they have to be in a column each - so create the pivot with the columns that should be plotted as individual lines
+-   otherwise, you can use `.T` to transpose the pivot if the lines to be plotted are rows
+-   The `ax.legend` statement can be used to specify the location of the legend. Using `loc='upper left` and `bbox_to_anchor=(1, 1)` puts the upper left corner of the legend outside of the chart
 
 ```python
 ax = (df_g_cities.loc[df['City'].isin(g_10_cities_2016)]
@@ -125,4 +125,32 @@ ax = (df_g_cities.loc[df['City'].isin(g_10_cities_2016)]
 ).plot()
 
 ax.legend(loc='upper left', bbox_to_anchor=(1, 1))
+```
+
+# Pandas as Excel replacement
+
+## VLOOKUPs
+
+## Transforming and combining columns
+
+### Applying a function to one or multiple rows
+
+Use `apply`, `map` or `applymap`.
+
+E.g. to apply a simple function to multiple columns - `applymap` applies the function to each cell.
+
+```python
+df['a', 'b'].applymap(lambda x: str(x).title())
+```
+
+### Combining values from columns into a new column
+
+Use `apply` with `axis=1` and reference the columns in the function:
+
+```python
+
+def f(a, b):
+    return ', '.join([str(b).title(), str(a).title()])
+
+df['combined'] = df.apply(lambda x: f(x['a'], x['b']), axis=1)
 ```
