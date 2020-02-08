@@ -27,6 +27,7 @@ Some cool tricks learned from Advent Of Code 2018
     - [Parsing a regex like input string with branches and options](#parsing-a-regex-like-input-string-with-branches-and-options)
   - [Topological sort](#topological-sort)
   - [Binary search](#binary-search)
+  - [Bit operations](#bit-operations)
 
 ## 1. Decoding some lines from input file 
 
@@ -294,4 +295,22 @@ while (((upper - mid) > 0) and ((mid - lower) > 0)):
     else:
         upper = mid
         mid -= (mid - lower) // 2    
+```
+
+## Bit operations
+
+```python
+def test_bit(bit_baseline, bit_to_test):
+    return (bit_baseline & bit_to_test) == bit_baseline
+
+def set_bit(bit_baseline, bit_to_set):
+    return bit_baseline | bit_to_set
+
+# manually create a bit mask
+first_bit_set = 1 << 1
+second_bit_set = 1 << 2
+# etc
+
+# check if a bit is set:
+if test_bit(target_mask, key_mask):
 ```
