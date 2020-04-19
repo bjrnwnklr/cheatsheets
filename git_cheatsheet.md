@@ -1,7 +1,7 @@
 ---
 title: Bjoern's Git cheat sheet
 author: Bjoern Winkler
-date: 23-June-2019
+date: 19-April-2020
 ---
 
 # Git cheat sheet
@@ -13,6 +13,41 @@ date: 23-June-2019
     $ git push -u origin --all
     ```
 
+# Migrate a Git repo from Azure DevOps to Github
+
+1. Create a new repo on GitHub
+1. Create a local clean copy of the repo (incl. history) in a new directory (as described [here](https://help.github.com/en/github/importing-your-projects-to-github/importing-a-git-repository-using-the-command-line))
+
+```console
+$ git clone --bare https://external-host.com/extuser/repo.git
+```
+
+3. Push the local cloned repo to GitHub using the 'mirror' option.
+
+```console
+$ cd repo.git
+$ git push --mirror https://github.com/ghuser/repo.git
+```
+
+4. Remove the temp local repo
+
+```console
+$ cd ..
+$ rm -rf repo.git
+```
+
+5. Change the remote URL of the existing local git repo to the new URL (e.g. on GitHub) (as described [here](https://help.github.com/en/github/using-git/changing-a-remotes-url))
+
+```console
+# list existing remotes
+$ git remote -v
+
+# change remote URL
+$ git remote set-url origin https://github.com/USERNAME/REPOSITORY.git
+
+# verify the URL has changed
+$ git remote -v
+```
 
 # Working with branches
 
