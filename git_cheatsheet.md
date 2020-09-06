@@ -6,12 +6,41 @@ date: 19-April-2020
 
 # Git cheat sheet
 
+# Initialize a directory with a git repo
+
+Directory with existing code.
+
+```shell
+$ git init
+```
+You might then have to connect to a remote repo, see next tip.
+
 # Initialize a new remote repo with an existing local repo from command line
 
     ```
     $ git remote add origin https://bjrnwnklr@dev.azure.com/bjrnwnklr/BulmaTest/_git/BulmaTest
     $ git push -u origin --all
     ```
+
+# Clone a new repo from github
+
+```shell
+$ git clone https://github.com/bjrnwnklr/algs1.git
+```
+
+# Move existing code (without .git) into a new github repo
+
+1. Rename existing folder to a temp name (assuming the github repo should have the same name)
+1. Create a new github repo on github.com (incl. a README and .gitignore file)
+1. Clone the new repo
+    ```shell
+    $ git clone https://github.com/bjrnwnklr/algs1.git
+    ```
+1. Copy the files from the temp directory into the new local repo directory
+1. Add / commit / push
+1. Delete the temp directory (old directory with files)
+
+
 
 # Migrate a Git repo from Azure DevOps to Github
 
