@@ -95,6 +95,19 @@ hm.foreach((k, v) -> {
 });
 ```
 
+## HashSet
+
+- A HashSet is similar to a Set in Python, but is lacking some of the useful mechanics like intersections between sets.
+
+Getting an intersection of two HashSets using a stream:
+
+```java
+Set<Point> intersection = visited1.stream()
+        .filter(visited2::contains)
+        .collect(Collectors.toSet());
+```
+
+
 
 # Advent Of Code 
 
@@ -170,6 +183,10 @@ public class Day01 {
 [Baeldung - reading files in java](https://www.baeldung.com/reading-file-in-java)
 [Read a file from a resources folder](https://mkyong.com/java/java-read-a-file-from-resources-folder/)
 
+### Multiple conversions from a file
+
+[Static Utils](https://github.com/tmrd993/advent-of-code-solutions/blob/master/src/2k19/myutils19/StaticUtils.java)
+
 
 ### Scanner including regular expressions
 
@@ -193,6 +210,75 @@ for (int i=1; i<=result.groupCount(); i++)
 s.close();
 ```
 
+Example getting Ints from a Scanner:
+```java
+public class Day1 {
+    public static void main(String[] args){
+        Scanner in = new Scanner(System.in);
+        List<Integer> masses = new ArrayList<>();
+        while (in.hasNextInt())
+            masses.add(in.nextInt());
+
+        partOne(masses);
+        partTwo(masses);
+    }
+
+    public static void partOne(List<Integer> masses) {
+        int sum = 0;
+        for (int mass: masses)
+            sum += (mass / 3) - 2;
+        System.out.println(sum);
+    }
+```
+
 ### Stream
 
 [Stream - Oracle](https://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html)
+
+Streams are very useful and were introduced in Java 8. You can chain multiple commands like `filter`, `map`, `min`, `toArray` etc onto each other.
+
+Doing useful things with a stream:
+- Getting the intersection between two sets (see above).
+- Finding the minimum using a custom comparator function (e.g. Manhattan distance)
+
+```java
+Point nearest = intersection.stream()
+    .min(Comparator.comparing(this::manhattanDistance))
+    .get();
+```
+
+The `.get()` is required here since the `min` filter returns an `Optional<Type>` object, `get()` then returns the actual object.
+
+- Generating an array of new objects from a comma separated string:
+
+```java
+private Walk[] generateWalks(String line) {
+    return Arrays.stream(line.split(","))
+            .map(Walk::new)
+            .toArray(Walk[]::new);
+}
+```
+
+We use the static `.stream` method here from the `Arrays` class. We then split the string by commas, map each element to a new Walk object and collect all of them into a new array.
+
+- Filter for a value and return a matching element from an Enum:
+
+```java
+public static Direction getDirByCompass(char code) {
+    return Arrays.stream(values())
+            .filter(d -> d.compass == code)
+            .findAny()
+            .get();
+}
+```
+
+`values()` returns the elements of the enumeration. We then compare a subelement (`.compass`) to the code provided, take one of the matching values (e.g. NORTH for 'N') and return it using `get()` - `get()` is required as the returned object from `findAny()` is an `Optional<Type>` object.
+
+### Parsing using Regex - example
+
+[Parser.java example class](https://github.com/SizableShrimp/AdventOfCode2019/blob/master/src/main/java/me/sizableshrimp/adventofcode/helper/Parser.java)
+
+
+### Enums
+
+Enums are classes with enumerable constants, e.g. directions like NORTH, SOUTH etc. You can add custom elements to each element e.g. short codes like 'N' to NORTH. These need to declared as `private` class variables and set in the constructor.
