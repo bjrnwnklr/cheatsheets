@@ -239,7 +239,7 @@ Streams are very useful and were introduced in Java 8. You can chain multiple co
 
 Doing useful things with a stream:
 - Getting the intersection between two sets (see above).
-- Finding the minimum using a custom comparator function (e.g. Manhattan distance)
+#### Finding the minimum using a custom comparator function (e.g. Manhattan distance)
 
 ```java
 Point nearest = intersection.stream()
@@ -249,7 +249,7 @@ Point nearest = intersection.stream()
 
 The `.get()` is required here since the `min` filter returns an `Optional<Type>` object, `get()` then returns the actual object.
 
-- Generating an array of new objects from a comma separated string:
+#### Generating an array of new objects from a comma separated string:
 
 ```java
 private Walk[] generateWalks(String line) {
@@ -261,7 +261,7 @@ private Walk[] generateWalks(String line) {
 
 We use the static `.stream` method here from the `Arrays` class. We then split the string by commas, map each element to a new Walk object and collect all of them into a new array.
 
-- Filter for a value and return a matching element from an Enum:
+#### Filter for a value and return a matching element from an Enum:
 
 ```java
 public static Direction getDirByCompass(char code) {
@@ -274,6 +274,38 @@ public static Direction getDirByCompass(char code) {
 
 `values()` returns the elements of the enumeration. We then compare a subelement (`.compass`) to the code provided, take one of the matching values (e.g. NORTH for 'N') and return it using `get()` - `get()` is required as the returned object from `findAny()` is an `Optional<Type>` object.
 
+#### Getting an array of Integers from a string separated by '-' and printing it out
+
+```java
+int[] range = Arrays.stream(input.split("-"))
+        .mapToInt(Integer::parseInt)
+        .toArray();
+
+Arrays.stream(range)
+        .forEach(System.out::println);
+```
+
+#### Joining strings together
+
+```java
+public static String join(String[] arrayOfString){
+    return Arrays.asList(arrayOfString)
+        .stream()
+        //.map(...)
+        .collect(Collectors.joining(","));
+}
+```
+
+#### Splitting a stream of strings on a ")"
+
+Note: `)` needs to be double escaped in a regex as otherwise it would be seen as a closing of a regex group.
+
+```java
+Stream<String> lines = AoCFileOps.getStreamFromFileName("2019/Day06ex1.txt");
+lines.map(str -> str.split("\\)"))
+        .forEach(pair -> graph.addEdge(pair[0], pair[1]));
+```
+
 ### Parsing using Regex - example
 
 [Parser.java example class](https://github.com/SizableShrimp/AdventOfCode2019/blob/master/src/main/java/me/sizableshrimp/adventofcode/helper/Parser.java)
@@ -282,3 +314,54 @@ public static Direction getDirByCompass(char code) {
 ### Enums
 
 Enums are classes with enumerable constants, e.g. directions like NORTH, SOUTH etc. You can add custom elements to each element e.g. short codes like 'N' to NORTH. These need to declared as `private` class variables and set in the constructor.
+
+# Graphs
+
+## Manual Graph implementation (simple)
+
+[Baeldung](https://www.baeldung.com/java-graphs)
+
+```java
+Graph graph = new Graph();
+// create a graph of the elements of orbits
+lines.map(str -> str.split("\\)"))
+        .forEach(pair -> graph.addEdge(pair[0], pair[1]));
+
+
+private class Graph {
+    private HashMap<String, ArrayList<String>> successors;
+
+    public Graph() {
+        this.successors = new HashMap<>();
+    }
+
+    public void addNode(String label) {
+        successors.putIfAbsent(label, new ArrayList<>());
+    }
+
+    public void addEdge(String from, String to) {
+        // check if nodes exist
+        this.addNode(from);
+        this.addNode(to);
+
+        // add directed edge "from" -> "to"
+        successors.get(from).add(to);
+    }
+
+    @Override
+    public String toString() {
+        return successors.toString();
+    }
+}
+```
+
+## JGraphT
+
+[JGraphT](https://jgrapht.org/guide/UserOverview) provides a Graph implementation in Java with many Graph algorithms on board.
+
+### Maven dependencies
+```maven
+<groupId>org.jgrapht</groupId>
+<artifactId>jgrapht-core</artifactId>
+<version>1.5.0</version>
+```
