@@ -210,7 +210,10 @@ for (int i=1; i<=result.groupCount(); i++)
 s.close();
 ```
 
-Example getting Ints from a Scanner:
+Example getting Ints from a Scanner **CAREFUL this has the issue of ignoring the last integer if no comma is following (e.g. Intcode programs)**
+
+Better use a BufferedReader.
+
 ```java
 public class Day1 {
     public static void main(String[] args){
@@ -229,6 +232,19 @@ public class Day1 {
             sum += (mass / 3) - 2;
         System.out.println(sum);
     }
+```
+
+This works better:
+
+```java
+public static List<Integer> readIntcodeProgramAsList(String fileName) throws IOException {
+    BufferedReader br = new BufferedReader(new FileReader(AoCFileOps.class.getClassLoader().getResource(fileName).getFile()));
+    String firstLine = br.readLine();
+    List<Integer> intcodeProgram = Arrays.stream(firstLine.split(","))
+            .map(Integer::parseInt)
+            .collect(Collectors.toList());
+    return intcodeProgram;
+}
 ```
 
 ### Stream
@@ -355,9 +371,66 @@ private class Graph {
 }
 ```
 
+## BFS
+
+[BFS - Baeldung](https://www.baeldung.com/java-breadth-first-search)
+
+Example implementation from Day 6 of AoC 2019, using a `ArrayDeque<QueueEntry>` for the queue and a `HashSet<String>` to track the visited nodes.
+
+The elements of the queue are wrapped into a private class for QueueEntries that just has a node name and steps attributes.
+
+```java
+public int findPathBFS(String from, String to) {
+    ArrayDeque<QueueEntry> queue = new ArrayDeque<>();
+    HashSet<String> visitedBFS = new HashSet<>();
+
+    queue.offer(new QueueEntry(from, 0));
+
+    while (!queue.isEmpty()) {
+        QueueEntry current = queue.poll();
+        String currentNode = current.getNode();
+        int currentSteps = current.getSteps();
+
+        // check if we have seen the current element
+        if (!visitedBFS.contains(currentNode)) {
+            visitedBFS.add(currentNode);
+
+            // check if we have found the target
+            if (currentNode.equals(to)) return currentSteps - 2;
+
+            // iterate through all neighbors
+            ArrayList<String> nodesToVisit = edges.get(currentNode);
+            for (String nextNode : nodesToVisit) {
+                queue.offer(new QueueEntry(nextNode, currentSteps + 1));
+            }
+        }
+    }
+    return -1;
+}
+
+private class QueueEntry {
+    private final String node;
+    private final int steps;
+
+    public QueueEntry(String node, int steps) {
+        this.node = node;
+        this.steps = steps;
+    }
+
+    public String getNode() {
+        return node;
+    }
+
+    public int getSteps() {
+        return steps;
+    }
+}
+```
+
 ## JGraphT
 
 [JGraphT](https://jgrapht.org/guide/UserOverview) provides a Graph implementation in Java with many Graph algorithms on board.
+[JGraphT - Baeldung](https://www.baeldung.com/jgrapht)
 
 ### Maven dependencies
 ```maven
@@ -365,3 +438,39 @@ private class Graph {
 <artifactId>jgrapht-core</artifactId>
 <version>1.5.0</version>
 ```
+
+## Combinatorics - often used!
+
+Combinatorics like permutations and combinations are often used.
+
+### Guava libraries
+
+Google's [Guava](https://github.com/google/guava) library provides a permutation implementation.
+
+- Add to Maven build:
+
+```xml
+<dependency>
+  <groupId>com.google.guava</groupId>
+  <artifactId>guava</artifactId>
+  <version>29.0-jre</version>
+</dependency>
+```
+
+[User guide](https://github.com/google/guava/wiki)
+
+### Baeldung implementation of combinatorics class
+
+[Baeldung](https://www.baeldung.com/java-combinatorial-algorithms)
+[GitHub](https://github.com/eugenp/tutorials/blob/master/algorithms-miscellaneous-5/src/main/java/com/baeldung/algorithms/combinatorics/Combinatorics.java)
+
+I used this to wrap it into a class, offering permutations, combinations and powersets.
+
+Example for permutations of range(0..4):
+```java
+// generate permutations of 0..4 as phase settings
+List<Integer> phaseValues = IntStream.range(0, 4)
+        .boxed()
+        .collect(Collectors.toList());
+List<List<Integer>> permutations = Combinatorics.permutations(phaseValues);
+``` 
