@@ -312,6 +312,16 @@ public static String join(String[] arrayOfString){
 }
 ```
 
+#### Splitting a string into individual strings (1 char each) and converting to Integers
+
+Splitting on an empty string breaks the input string into individual characters.
+
+```java
+List<Integer> img = Arrays.stream(firstLine.split(""))
+        .map(Integer::parseInt)
+        .collect(Collectors.toList());
+```
+
 #### Splitting a stream of strings on a ")"
 
 Note: `)` needs to be double escaped in a regex as otherwise it would be seen as a closing of a regex group.
