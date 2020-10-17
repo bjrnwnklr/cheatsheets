@@ -133,3 +133,30 @@ $ pihole -a -p
 - Configure Upstream DNS servers for USG:
     - In USG > Internet > WAN Networks > Edit
         - DNS Servers: set to 1.1.1.1 (Cloudflare) and 8.8.8.8 (Google)
+
+
+## Backup
+
+Backup the settings of Pi-Hole either via the admin web interface (Settings > Teleporter) or via SSH:
+
+```console
+$ pihole -a teleporter
+```
+
+## Shutdown the Raspberry Pi including Pi-Hole
+
+The Raspberry Pi needs to be gracefully shutdown or you risk corruption.
+
+Use the following commands to shut down:
+
+```console
+$ sudo shutdown -h now
+$ sudo poweroff
+```
+
+To reboot
+
+```console
+$ sudo shutdown -r now
+$ sudo reboot
+```
