@@ -127,6 +127,7 @@ $ pihole -a -p
 
 - In Settings > Networks > Local Networks > Edit
     - DHCP Name Server: Manual, enter IP address of RPi under DNS Server 1
+    - [Don't set any other DNS servers](https://www.reddit.com/r/pihole/comments/864oli/secondary_dns_setting/) as they don't act as backups, but get queried in parallel
 
 - In USG, under Services > DHCP > DHCP Server, be sure `Register client hostname from DHCP requests in USG DNS forwarder` is `On`
 
