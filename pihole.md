@@ -11,3 +11,5 @@
 
 [Installing operating sytem images using Raspberry Pi Imager](https://www.raspberrypi.org/documentation/installation/installing-images/README.md)
 
+- Create a file called `ssh` on the SD card to enable SSH connections on the RPi.
+- 
