@@ -127,6 +127,7 @@ $ pihole -a -p
 
 - In Settings > Networks > Local Networks > Edit
     - DHCP Name Server: Manual, enter IP address of RPi under DNS Server 1
+    - [Don't set any other DNS servers](https://www.reddit.com/r/pihole/comments/864oli/secondary_dns_setting/) as they don't act as backups, but get queried in parallel
 
 - In USG, under Services > DHCP > DHCP Server, be sure `Register client hostname from DHCP requests in USG DNS forwarder` is `On`
 
@@ -137,7 +138,7 @@ $ pihole -a -p
 
 ## Backup settings
 
-On Pi-Hole, use the admin interface Settings > Teleporter, or
+On Pi-Hole, use the admin interface Settings > Teleporter, or connect via SSH:
 
 ```console
 $ pihole -a teleporter
@@ -163,3 +164,21 @@ Eventuell auch diese für Smart IPTV freischalten:
 ## Whitelist - commonly whitelisted domains for Pi-Hole
 
 [Github](https://github.com/anudeepND/whitelist)
+
+
+## Shutdown the Raspberry Pi including Pi-Hole
+
+The Raspberry Pi needs to be gracefully shutdown or you risk corruption.
+
+Use the following commands to shut down:
+
+```console
+$ sudo shutdown -h now
+$ sudo poweroff
+```
+
+To reboot
+
+```console
+$ sudo shutdown -r now
+$ sudo reboot
