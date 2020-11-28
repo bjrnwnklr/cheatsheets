@@ -133,3 +133,33 @@ $ pihole -a -p
 - Configure Upstream DNS servers for USG:
     - In USG > Internet > WAN Networks > Edit
         - DNS Servers: set to 1.1.1.1 (Cloudflare) and 8.8.8.8 (Google)
+
+
+## Backup settings
+
+On Pi-Hole, use the admin interface Settings > Teleporter, or
+
+```console
+$ pihole -a teleporter
+```
+
+Which creates a local file with the backup data.
+
+## Samsung TV
+
+[Samsung TV doesn't allow to log in to Samsung account](https://us.community.samsung.com/t5/4k-8k-and-Other-TVs/Unable-to-connect-to-the-samsung-server-Check-your-network/td-p/460803/page/4)
+
+Unblock the following sites from the Pi-Hole blacklist:
+- lcprd1.samsungcloudsolution.net
+- gpm.samsungqbe.com
+- log-config.samsungacr.com
+- log-ingestion.samsungacr.com
+
+Use this filter in Pi-Hole to see log entries: [http://192.168.1.8/admin/queries.php?client=192.168.1.128](http://192.168.1.8/admin/queries.php?client=192.168.1.128)
+
+Eventuell auch diese für Smart IPTV freischalten:
+- fls-na.amazon.com
+
+## Whitelist - commonly whitelisted domains for Pi-Hole
+
+[Github](https://github.com/anudeepND/whitelist)
