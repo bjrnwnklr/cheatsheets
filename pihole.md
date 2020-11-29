@@ -170,6 +170,14 @@ Eventuell auch diese für Smart IPTV freischalten:
 
 The Raspberry Pi needs to be gracefully shutdown or you risk corruption.
 
+Log in with the following command:
+
+```console
+$ ssh pi@192.168.1.8
+```
+
+and enter the password for the Raspberry (not for Pi-Hole admin).
+
 Use the following commands to shut down:
 
 ```console
