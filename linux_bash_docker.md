@@ -5,6 +5,12 @@
 ## Linux
 [Ubuntu - command line for beginners](https://ubuntu.com/tutorials/command-line-for-beginners#1-overview)
 
+
+## Dotfiles
+[Managing your dotfiles](https://www.anishathalye.com/2014/08/03/managing-your-dotfiles/)
+[Using Git and Github to manage your dotfiles](http://blog.smalleycreative.com/tutorials/using-git-and-github-to-manage-your-dotfiles/)
+[Getting started with Dotfiles](https://medium.com/@webprolific/getting-started-with-dotfiles-43c3602fd789)
+
 ## Bash
 
 
@@ -43,3 +49,43 @@
 - What are other use cases where it makes sense to use Docker
 - How to deploy to Azure / Kubernetes
 - 
+
+
+# Set-up
+
+## Git
+
+[Git on WSL](https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-git)
+
+Set up Git Credential Manager for use with WSL:
+
+```shell
+git config --global credential.helper "/mnt/c/Program\ Files/Git/mingw64/libexec/git-core/git-credential-manager.exe"
+```
+
+
+## Dotfiles
+
+Clone my dotfile repository:
+
+```shell
+git clone https://github.com/bjrnwnklr/dotfiles.git
+```
+
+Change the `install.sh` script to executable and run it:
+
+```shell
+cd dotfiles
+chmod +x ./install.sh
+./install.sh
+```
+
+### Dotfiles structure
+
+- Dotfiles are in the `dotfiles` directory, saved with their original filenames i.e. with a leading dot.
+- The `install.sh` script 
+    - takes a list of files named in the script, 
+    - copies any existing versions in the homedir to `dotfiles.old`
+    - creates symlinks from the homedir to the version in `dotfiles` 
+
+I currently only use a `.bashrc` file and a `.profile` file. The `.profile` file looks for `~/dotfiles/bin` and appends that to the path if it exists.
