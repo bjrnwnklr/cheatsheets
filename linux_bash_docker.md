@@ -10,6 +10,7 @@
 [Managing your dotfiles](https://www.anishathalye.com/2014/08/03/managing-your-dotfiles/)
 [Using Git and Github to manage your dotfiles](http://blog.smalleycreative.com/tutorials/using-git-and-github-to-manage-your-dotfiles/)
 [Getting started with Dotfiles](https://medium.com/@webprolific/getting-started-with-dotfiles-43c3602fd789)
+[Git in Bash](https://git-scm.com/book/id/v2/Appendix-A%3A-Git-in-Other-Environments-Git-in-Bash)
 
 ## Bash
 
