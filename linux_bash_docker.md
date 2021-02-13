@@ -3,10 +3,20 @@
 # Resources
 
 ## Linux
+
 [Ubuntu - command line for beginners](https://ubuntu.com/tutorials/command-line-for-beginners#1-overview)
+[Linux command line cheatsheet](https://cheatography.com/davechild/cheat-sheets/linux-command-line/)
+
+## VIM
+
+[Vim cheat sheet](https://vim.rtorr.com/)
+[basic.vim](https://github.com/amix/vimrc/blob/master/vimrcs/basic.vim)
+[Learn vim for the last time](https://danielmiessler.com/study/vim/)
+
 
 
 ## Dotfiles
+
 [Managing your dotfiles](https://www.anishathalye.com/2014/08/03/managing-your-dotfiles/)
 [Using Git and Github to manage your dotfiles](http://blog.smalleycreative.com/tutorials/using-git-and-github-to-manage-your-dotfiles/)
 [Getting started with Dotfiles](https://medium.com/@webprolific/getting-started-with-dotfiles-43c3602fd789)
@@ -16,6 +26,7 @@
 
 
 ## WSL
+
 [Microsoft - install WSL on Windows 10 Home](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
 [Microsoft - manually downloading a WSL ditro](https://docs.microsoft.com/en-us/windows/wsl/install-manual)
 
@@ -27,10 +38,10 @@
 ## Linux
 
 - Cheat sheet for common Linux commands
-- Cheat sheet for vim
-- Config for vim
+- Cheat sheet for vim DONE 
+- Config for vim DONE
 - Dotfiles - find a good repository
-- Dotfiles - how to synch using git
+- Dotfiles - how to synch using git DONE
 
 ## Bash
 
