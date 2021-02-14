@@ -12,6 +12,9 @@
 [Vim cheat sheet](https://vim.rtorr.com/)
 [basic.vim](https://github.com/amix/vimrc/blob/master/vimrcs/basic.vim)
 [Learn vim for the last time](https://danielmiessler.com/study/vim/)
+[Python and vim](https://realpython.com/vim-and-python-a-match-made-in-heaven/)
+
+[Vundle - extension manager](https://github.com/gmarik/Vundle.vim)
 
 
 
