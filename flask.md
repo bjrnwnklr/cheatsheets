@@ -70,6 +70,17 @@ Using a `.env` file is useful for local development using `python-dotenv`, but c
 
 - flask run etc
 
+# WSGI servers
+
+WSGI stands for Web Server Gateway Interface and defines a standard for a web interface supporting Python applications.
+
+[Fullstackpython - WSGI servers](https://www.fullstackpython.com/wsgi-servers.html)
+
+# Docker with Flask, Gunicorn, nginx
+
+[Dockerizing Flask with Postgres, Gunicorn and nginx](https://testdriven.io/blog/dockerizing-flask-with-postgres-gunicorn-and-nginx/)
+[How to configure nginx for a Flask web application](https://www.patricksoftwareblog.com/how-to-configure-nginx-for-a-flask-web-application/)
+
 # Python app examples
 
 - defining routes, parameters
