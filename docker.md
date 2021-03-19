@@ -100,3 +100,19 @@ Use `prune` to remove all dangling images.
 ```shell
 $ docker image prune
 ``` 
+
+# docker-compose
+
+`docker-compose` can be used to build networks of containers and bring them up automatically. The containers are defined in the `docker-compose.yml` file.
+
+[docker-compose documentation](https://docs.docker.com/compose/gettingstarted/)
+
+Key commands:
+
+```shell
+$ docker-compose up -d      # build or update containers, then start them in detached mode
+$ docker-compose ps         # show running containers
+$ docker-compose logs -f    # show a running log for all containers
+$ docker-compose stop       # stop running containers without removing them
+$ docker-compose down       # bring all running containers down and remove them
+```
