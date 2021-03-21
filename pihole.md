@@ -38,7 +38,7 @@ $ sudo apt-get autoremove
 $ sudo apt-get autoclean
 ```
 
-- Turn of swapping (default 100MB) - not required for a server
+- Turn off swapping (default 100MB) - not required for a server
 
 As per [Pi-hole](https://discourse.pi-hole.net/t/pi-hole-sd-card-schonung/12727/24) - turn off swapping on Pi-holes as it is really not required.
 
@@ -190,3 +190,49 @@ To reboot
 ```console
 $ sudo shutdown -r now
 $ sudo reboot
+```
+
+# Updating the Raspberry Pi and Pi-Hole
+
+First - update the local network settings on the computer in use to use public DNS servers instead of the Raspberry Pi-Hole.
+
+- Go to Control Panel > Network and Internet > Network Connections, select "Ethernet", click Properties and change the IPv4 settings from automatic configuration via DHCP to manual configuration. Assign the current IP address (check with `ipconfig /all`).
+- Set Gateway to 192.168.1.1 and DNS servers to 1.1.1.1, 8.8.8.8
+
+## Updating Raspberry Pi
+
+[Official documentation](https://www.raspberrypi.org/documentation/raspbian/updating.md)
+
+```shell
+$ ssh pi@192.168.1.8
+$ sudo apt update
+$ df -h                         # check free space
+$ sudo apt full-upgrade
+$ sudo apt clean                # remove downloaded package files to free up space
+$ sudo reboot
+```
+
+## Updating Pi-hole
+
+[Official documentation](https://docs.pi-hole.net/main/update/)
+
+Check version:
+
+```shell
+pi@raspberrypi:~ $ pihole -v
+  Pi-hole version is v5.1.2 (Latest: v5.2.4)
+  AdminLTE version is v5.1.1 (Latest: v5.4)
+  FTL version is v5.2 (Latest: v5.7)
+```
+
+Update:
+
+```shell
+$ pihole -up
+# ...
+Update Complete!
+
+  Current Pi-hole version is v5.2.4.
+  Current AdminLTE version is v5.4.
+  Current FTL version is v5.7.
+```
