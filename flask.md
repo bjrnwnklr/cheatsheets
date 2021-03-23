@@ -47,7 +47,13 @@ setup(
 )
 ```
 
-You should then set the `FLASK_APP` environment variable to run the application with `flask run`.
+To correctly resolve the names from the package, install the package in development mode as explained in the [Flask documentation](https://flask.palletsprojects.com/en/1.1.x/patterns/distribute/#distribute-deployment):
+
+```shell
+$ python setup.py develop
+```
+
+You should then set the `FLASK_APP` environment variable to the application name (`yourapplication` in this case) to be able to run the application with `flask run`.
 
 ## Environment variables e.g. secrets
 
