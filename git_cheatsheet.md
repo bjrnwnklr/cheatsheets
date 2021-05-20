@@ -158,3 +158,20 @@ $ git grep -i -n --perl-regexp --no-index -e pass(word|phrase)
     ```
     $ git checkout <commit-id> <filename>
     ```
+
+# Updating personal access token e.g. after expiring
+
+On Windows:
+- generate a new access token from github.com > Settings > Developer Settings > Personal Access Tokens
+- grant at least repo, workflow and gist access rights
+- copy the token
+- from the command line, run
+
+```shell
+$ git config --global credential.helper wincred
+```
+
+and paste the new token in there to authenticate.
+
+[Creating a personal access token](https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token)
+[Caching your GitHub credentials in Git](https://docs.github.com/en/github/getting-started-with-github/getting-started-with-git/caching-your-github-credentials-in-git)
