@@ -14,7 +14,6 @@
 
 Install Rustup, the Rust installer and version management tool.
 
-
 # Rustup commands
 
 Update Rust:
@@ -39,6 +38,12 @@ To test that you have Rust and Cargo installed, you can run this in your termina
 cargo --version
 ```
 
+## Creating a new project incl. cargo.toml
+
+```console
+$ cargo new hello_cargo
+```
+
 ## Compiling a program manually
 
 Use `rustc` to compile a program manually without building a project.
@@ -56,3 +61,24 @@ rustc hello-world.rs
 - `println!`: same as `print!` but a newline is appended.
 - `eprint!`: same as `format!` but the text is printed to the standard error (io::stderr).
 - `eprintln!`: same as eprint!but a newline is appended.
+
+### Debug printing
+
+Debug output (e.g. contents of a structure) can be printed using the `{:?}` and `{:#?}` formats (implementing the fmt::Debug trait). Structs will have to implement the Debug attribute with `#[derive(Debug)]`:
+
+```rust
+#[derive(Debug)]
+struct Person<'a> {
+    name: &'a str,
+    age: u8
+}
+
+fn main() {
+    let name = "Peter";
+    let age = 27;
+    let peter = Person { name, age};
+
+    println!("{:?}", peter);
+    println!("{:#?}", peter);
+}
+```
