@@ -44,6 +44,37 @@ cargo --version
 $ cargo new hello_cargo
 ```
 
+- We can build a project using `cargo build`.
+- We can build and run a project in one step using `cargo run`.
+- We can build a project without producing a binary to check for errors using `cargo check`.
+- Instead of saving the result of the build in the same directory as our code, Cargo stores it in the `target/debug` directory.
+
+## Build a project
+
+```console
+$ cargo build
+```
+
+The executable will be in `./target/debug`.
+
+To build for release with optimizations, use the `--release` option. The executable is then in `target/release` and optimized for performance.
+
+```console
+$ cargo build --release
+```
+
+## Build and run a project
+
+```console
+$ cargo run
+```
+
+## Checking a project that it compiles without producing an executable
+
+```console
+$ cargo check
+```
+
 ## Compiling a program manually
 
 Use `rustc` to compile a program manually without building a project.
